@@ -1,16 +1,14 @@
-package rpc_core;
+package vo;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.ToString;
 
-@Getter
 @AllArgsConstructor
 @ToString
-public enum RpcResponseStatusBean {
+public enum ResponseStatusBean {
     SUCCESS(200, "服务调用成功"),
-    SERVICE_NOT_EXISTS(404, "请求服务不存在");
-
+    FAIL(400, "服务调用失败"),
+    ;
 
     private final Integer statusCode;
     private final String message;

@@ -1,7 +1,8 @@
-package rpc_core;
+package rpc_core.client;
 
 import lombok.AllArgsConstructor;
 import rpc_core.RpcRequest;
+import rpc_core.RpcResponse;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -17,7 +18,7 @@ public class RpcClientProxy implements InvocationHandler {
     }
 
     @Override
-    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+    public Object invoke(Object proxy, Method method, Object[] args) {
         RpcRequest rpcRequest = RpcRequest.builder()
                     .interfaceName(method.getDeclaringClass().getName())
                     .methodName(method.getName())

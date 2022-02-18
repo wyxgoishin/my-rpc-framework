@@ -1,7 +1,8 @@
-package rpc_core;
+package rpc_core.client;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rpc_core.RpcRequest;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -19,7 +20,7 @@ public class RpcClient {
             objectOutputStream.flush();
             return objectInputStream.readObject();
         } catch (IOException | ClassNotFoundException e){
-            logger.error("调用时发生错误：" + e.getLocalizedMessage());
+            logger.error("调用时发生错误：" + e);
             return null;
         }
     }

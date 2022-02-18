@@ -1,21 +1,50 @@
 package rpc_core;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-import java.io.Externalizable;
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
+import java.io.*;
 
-public class RpcRequest implements Externalizable {
+@Builder
+@Data
+public class RpcRequest implements Serializable {
     private static final long serialVersionUID = -1957686175929610806L;
     private String interfaceName;
     private String methodName;
     private Class<?>[] parameterTypes;
     private Object[] parameters;
 
+    /* out.writeObject(clazz)会报错，暂时没查明原因
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeUTF(interfaceName);
+        out.writeUTF(methodName);
+        out.writeInt(parameters.length);
+        for(Class<?> clazz : parameterTypes){
+            out.writeObject(clazz);
+        }
+        out.writeInt(parameters.length);
+        for(Object parameter : parameters){
+            out.writeObject(parameter);
+        }
+    }
+
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        this.interfaceName = in.readUTF();
+        this.methodName = in.readUTF();
+        this.parameterTypes = new Class<?>[in.readInt()];
+        for(int i = 0; i < this.parameterTypes.length; i++){
+            this.parameterTypes[i] = (Class<?>) in.readObject();
+        }
+        this.parameters = new Object[in.readInt()];
+        for(int i = 0; i < this.parameters.length; i++){
+            this.parameters[i] = in.readObject();
+        }
+    }
+
+     */
+
+    /* 手动实现的builder模式，仅做学习参考
     static class Builder{
         private String interfaceName;
         private String methodName;
@@ -60,19 +89,5 @@ public class RpcRequest implements Externalizable {
         return new Builder();
     }
 
-    @Override
-    public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeUTF(interfaceName);
-        out.writeUTF(methodName);
-        out.writeObject(parameterTypes);
-        out.writeObject(parameters);
-    }
-
-    @Override
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        this.interfaceName = in.readUTF();
-        this.methodName = in.readUTF();
-        this.parameterTypes = (Class<?>[]) in.readObject();
-        this.parameters = (Object[]) in.readObject();
-    }
+     */
 }
