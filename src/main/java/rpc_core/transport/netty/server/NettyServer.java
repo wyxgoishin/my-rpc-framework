@@ -7,20 +7,33 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
-import lombok.AllArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import rpc_core.RpcServer;
+import rpc_common.enumeration.RpcExceptionBean;
+import rpc_common.enumeration.SerializerCode;
+import rpc_common.exception.RpcException;
 import rpc_core.codec.CommonDecoder;
 import rpc_core.codec.CommonEncoder;
-import rpc_core.registry.ServiceRegistry;
-import rpc_core.serializer.JsonSerializer;
-import rpc_core.serializer.KryoSerializer;
+import rpc_core.provider.DefaultServiceProvider;
+import rpc_core.registry.NacosServiceRegistry;
+import rpc_core.serializer.CommonSerializer;
+import rpc_core.transport.AbstractRpcServer;
 
-@AllArgsConstructor
-public class NettyServer implements RpcServer {
-    private static final Logger logger = LoggerFactory.getLogger(NettyServer.class);
-    private final ServiceRegistry serviceRegistry;
+public class NettyServer extends AbstractRpcServer {
+    public NettyServer(String host, int port){
+        this(host, port, DEFAULT_SERIALIZER_CODE.getCode());
+    }
+
+    public NettyServer(String host, int port, SerializerCode serializerCode){
+        this(host, port, serializerCode.getCode());
+    }
+
+    public NettyServer(String host, int port, int code){
+        this.host = host;
+        this.port = port;
+        serializer = CommonSerializer.getByCode(code);
+        serviceRegistry = new NacosServiceRegistry();
+        serviceProvider = new DefaultServiceProvider();
+    }
+
 
     @Override
     public void start(int port) {
@@ -42,18 +55,27 @@ public class NettyServer implements RpcServer {
                         protected void initChannel(SocketChannel socketChannel) {
                             ChannelPipeline pipeline = socketChannel.pipeline();
                             pipeline.addLast(new CommonDecoder())
-                                    .addLast(new CommonEncoder(new KryoSerializer()))
-                                    .addLast(new NettyServerHandler(serviceRegistry));
+                                    .addLast(new CommonEncoder(serializer))
+                                    .addLast(new NettyServerHandler(serviceProvider));
                         }
                     });
 
             ChannelFuture future = serverBootstrap.bind(port).sync();
             future.channel().closeFuture().sync();
         } catch (InterruptedException e){
-            logger.info("启动服务器时发生错误：", e);
+            logger.info("{} ：", RpcExceptionBean.BOOT_SERVER_FAILED.getErrorMessage(), e);
         } finally {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
         }
+    }
+
+    @Override
+    public <T> void publishService(Object service, String serviceName) {
+        if(serializer == null){
+            logger.error(RpcExceptionBean.SERIALIZER_NOT_EXISTS.getErrorMessage());
+            throw new RpcException(RpcExceptionBean.SERIALIZER_NOT_EXISTS);
+        }
+        super.publishService(service, serviceName);
     }
 }

@@ -22,7 +22,7 @@ public class CommonDecoder extends ReplayingDecoder {
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) {
         int magicNumber = in.readInt();
         if(magicNumber != MAGIC_NUMBER){
-            logger.error("无法识别的协议包：{}", magicNumber);
+            logger.error("{} ：{}", RpcExceptionBean.UNKNOWN_PROTOCOL.getErrorMessage(), magicNumber);
             throw new RpcException(RpcExceptionBean.UNKNOWN_PROTOCOL);
         }
 
@@ -33,14 +33,14 @@ public class CommonDecoder extends ReplayingDecoder {
         }else if(packageCode == PackageType.RESPONSE_PACK.getCode()){
             packageClass = RpcResponse.class;
         }else{
-            logger.error("无法识别的数据包类型：{}", packageCode);
+            logger.error("{} ：{}", RpcExceptionBean.UNKNOWN_PACKAGE_CODE.getErrorMessage(), packageCode);
             throw new RpcException(RpcExceptionBean.UNKNOWN_PACKAGE_CODE);
         }
 
         int serializerCode = in.readInt();
         CommonSerializer serializer = CommonSerializer.getByCode(serializerCode);
         if(serializer == null){
-            logger.error("无法识别的序列化器类型：{}", serializerCode);
+            logger.error("{} ：{}", RpcExceptionBean.UNKNOWN_SERIALIZER.getErrorMessage(), serializerCode);
             throw new RpcException(RpcExceptionBean.UNKNOWN_SERIALIZER);
         }
 

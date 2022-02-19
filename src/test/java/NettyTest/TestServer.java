@@ -1,8 +1,8 @@
 package NettyTest;
 
-import rpc_core.RpcServer;
-import rpc_core.registry.DefaultServiceRegistry;
-import rpc_core.registry.ServiceRegistry;
+import rpc_core.transport.RpcServer;
+import rpc_core.provider.DefaultServiceProvider;
+import rpc_core.provider.ServiceProvider;
 import rpc_core.transport.netty.server.NettyServer;
 import service.HelloService;
 import service.impl.HelloServiceImpl;
@@ -10,9 +10,10 @@ import service.impl.HelloServiceImpl;
 public class TestServer {
     public static void main(String[] args) {
         HelloService helloService = new HelloServiceImpl();
-        ServiceRegistry serviceRegistry = new DefaultServiceRegistry();
-        serviceRegistry.register(helloService);
-        RpcServer server = new NettyServer(serviceRegistry);
+        RpcServer server = new NettyServer("localhost", 9000);
+        for(Class<?> clazz : helloService.getClass().getInterfaces()){
+            server.publishService(helloService, clazz.getCanonicalName());
+        }
         server.start(9000);
     }
 }

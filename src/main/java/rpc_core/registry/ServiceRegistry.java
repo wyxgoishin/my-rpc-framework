@@ -1,6 +1,7 @@
 package rpc_core.registry;
 
+import java.net.InetSocketAddress;
+
 public interface ServiceRegistry {
-    <K> void register(K service);
-    Object getService(String serviceName);
+    void register(String serviceName, InetSocketAddress inetSocketAddress);
 }

@@ -37,7 +37,7 @@ public class KryoSerializer implements CommonSerializer{
                 return output.toBytes();
             }
         } catch (IOException e) {
-            logger.error("序列化时发生错误：", e);
+            logger.error("{} ：", RpcExceptionBean.SERIALIZAION_ERROR.getErrorMessage(), e);
             throw new RpcException(RpcExceptionBean.SERIALIZAION_ERROR);
         }
     }
@@ -52,7 +52,7 @@ public class KryoSerializer implements CommonSerializer{
                 return o;
             }
         } catch (IOException e) {
-            logger.error("反序列化时发生错误：", e);
+            logger.error("{} ：", RpcExceptionBean.SERIALIZAION_ERROR.getErrorMessage(), e);
             throw new RpcException(RpcExceptionBean.SERIALIZAION_ERROR);
         }
     }

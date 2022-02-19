@@ -2,11 +2,10 @@ package rpc_core.transport.netty.client;
 
 import io.netty.channel.*;
 import io.netty.util.AttributeKey;
-import io.netty.util.ReferenceCountUtil;
-import io.netty.util.concurrent.EventExecutorGroup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rpc_common.entity.RpcResponse;
+import rpc_common.enumeration.RpcExceptionBean;
 
 public class NettyClientHandler extends SimpleChannelInboundHandler<RpcResponse> {
     private static final Logger logger = LoggerFactory.getLogger(NettyClientHandler.class);
@@ -21,7 +20,7 @@ public class NettyClientHandler extends SimpleChannelInboundHandler<RpcResponse>
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        logger.error("处理过程中发生错误：", cause);
+        logger.error("{} : ", RpcExceptionBean.PROCESS_SERVICE_EXCEPTION.getErrorMessage(), cause);
         ctx.close();
     }
 }

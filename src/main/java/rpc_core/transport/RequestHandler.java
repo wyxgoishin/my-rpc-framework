@@ -30,7 +30,7 @@ public class RequestHandler {
         try {
             return method.invoke(service, rpcRequest.getParameters());
         } catch (IllegalAccessException | InvocationTargetException e) {
-            return RpcResponse.fail(RpcExceptionBean.RUNTIME_ERROR);
+            return RpcResponse.fail(RpcExceptionBean.SERVICE_RUNTIME_EXCEPTION);
         }
     }
 }

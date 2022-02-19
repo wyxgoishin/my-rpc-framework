@@ -1,10 +1,10 @@
 package rpc_core.transport.socket.client;
 
 import lombok.AllArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import rpc_common.entity.RpcRequest;
-import rpc_core.RpcClient;
+import rpc_common.entity.RpcResponse;
+import rpc_common.enumeration.RpcExceptionBean;
+import rpc_core.transport.AbstractRpcClient;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -12,8 +12,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 @AllArgsConstructor
-public class SocketClient implements RpcClient {
-    private static final Logger logger = LoggerFactory.getLogger(SocketClient.class);
+public class SocketClient extends AbstractRpcClient {
     private String host;
     private int port;
 
@@ -26,8 +25,8 @@ public class SocketClient implements RpcClient {
             objectOutputStream.flush();
             return objectInputStream.readObject();
         } catch (IOException | ClassNotFoundException e){
-            logger.error("调用时发生错误：" + e);
-            return null;
+            logger.error("{} : ", RpcExceptionBean.PROCESS_SERVICE_EXCEPTION, e);
+            return RpcResponse.fail(RpcExceptionBean.PROCESS_SERVICE_EXCEPTION);
         }
     }
 }
