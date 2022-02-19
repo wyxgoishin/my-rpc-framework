@@ -2,8 +2,8 @@ package rpc_core.registry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rpc_common.RpcError;
-import vo.RpcErrorBean;
+import rpc_common.exception.RpcError;
+import rpc_common.enumeration.RpcErrorBean;
 
 import java.util.Map;
 import java.util.Set;
