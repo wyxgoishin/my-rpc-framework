@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rpc_common.entity.RpcRequest;
 import rpc_common.entity.RpcResponse;
-import rpc_common.enumeration.RpcErrorBean;
+import rpc_common.enumeration.RpcExceptionBean;
 import rpc_core.RpcClient;
 import rpc_core.codec.CommonDecoder;
 import rpc_core.codec.CommonEncoder;
@@ -68,6 +68,6 @@ public class NettyClient implements RpcClient {
         } catch (InterruptedException e) {
             logger.error("发送消息时发生错误：", e);
         }
-        return RpcResponse.fail(RpcErrorBean.CLIENT_UNAVAILABLE);
+        return RpcResponse.fail(RpcExceptionBean.CLIENT_UNAVAILABLE);
     }
 }

@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rpc_common.entity.RpcRequest;
 import rpc_common.entity.RpcResponse;
-import rpc_common.enumeration.RpcErrorBean;
+import rpc_common.enumeration.RpcExceptionBean;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -25,12 +25,12 @@ public class RequestHandler {
         try {
             method = service.getClass().getMethod(rpcRequest.getMethodName(), rpcRequest.getParameterTypes());
         } catch (NoSuchMethodException e){
-            return RpcResponse.fail(RpcErrorBean.METHOD_NOT_FOUND);
+            return RpcResponse.fail(RpcExceptionBean.METHOD_NOT_FOUND);
         }
         try {
             return method.invoke(service, rpcRequest.getParameters());
         } catch (IllegalAccessException | InvocationTargetException e) {
-            return RpcResponse.fail(RpcErrorBean.RUNTIME_ERROR);
+            return RpcResponse.fail(RpcExceptionBean.RUNTIME_ERROR);
         }
     }
 }

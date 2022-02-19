@@ -8,8 +8,8 @@ import org.slf4j.LoggerFactory;
 import rpc_common.entity.RpcRequest;
 import rpc_common.entity.RpcResponse;
 import rpc_common.enumeration.PackageType;
-import rpc_common.enumeration.RpcErrorBean;
-import rpc_common.exception.RpcError;
+import rpc_common.enumeration.RpcExceptionBean;
+import rpc_common.exception.RpcException;
 import rpc_core.serializer.CommonSerializer;
 
 import java.util.List;
@@ -23,7 +23,7 @@ public class CommonDecoder extends ReplayingDecoder {
         int magicNumber = in.readInt();
         if(magicNumber != MAGIC_NUMBER){
             logger.error("无法识别的协议包：{}", magicNumber);
-            throw new RpcError(RpcErrorBean.UNKNOWN_PROTOCOL);
+            throw new RpcException(RpcExceptionBean.UNKNOWN_PROTOCOL);
         }
 
         int packageCode = in.readInt();
@@ -34,14 +34,14 @@ public class CommonDecoder extends ReplayingDecoder {
             packageClass = RpcResponse.class;
         }else{
             logger.error("无法识别的数据包类型：{}", packageCode);
-            throw new RpcError(RpcErrorBean.UNKNOWN_PACKAGE_CODE);
+            throw new RpcException(RpcExceptionBean.UNKNOWN_PACKAGE_CODE);
         }
 
         int serializerCode = in.readInt();
         CommonSerializer serializer = CommonSerializer.getByCode(serializerCode);
         if(serializer == null){
             logger.error("无法识别的序列化器类型：{}", serializerCode);
-            throw new RpcError(RpcErrorBean.UNKNOWN_SERIALIZER);
+            throw new RpcException(RpcExceptionBean.UNKNOWN_SERIALIZER);
         }
 
         int length = in.readInt();

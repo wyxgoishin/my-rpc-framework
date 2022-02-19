@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import rpc_common.enumeration.ResponseStatusBean;
-import rpc_common.enumeration.RpcErrorBean;
+import rpc_common.enumeration.RpcExceptionBean;
 
 import java.io.Serializable;
 
@@ -14,7 +14,7 @@ import java.io.Serializable;
 public class RpcResponse<T> implements Serializable {
     private static final long serialVersionUID = -526342193122001948L;
     private ResponseStatusBean responseBean;
-    private RpcErrorBean rpcErrorBean;
+    private RpcExceptionBean rpcExceptionBean;
     private T data;
 
     /*
@@ -39,10 +39,10 @@ public class RpcResponse<T> implements Serializable {
         return response;
     }
 
-    public static <K> RpcResponse<K> fail(RpcErrorBean rpcErrorBean){
+    public static <K> RpcResponse<K> fail(RpcExceptionBean rpcExceptionBean){
         RpcResponse<K> response = new RpcResponse<>();
         response.setResponseBean(ResponseStatusBean.FAIL);
-        response.setRpcErrorBean(rpcErrorBean);
+        response.setRpcExceptionBean(rpcExceptionBean);
         return response;
     }
 }

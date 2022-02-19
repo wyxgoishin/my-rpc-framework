@@ -2,8 +2,8 @@ package rpc_core.registry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rpc_common.exception.RpcError;
-import rpc_common.enumeration.RpcErrorBean;
+import rpc_common.exception.RpcException;
+import rpc_common.enumeration.RpcExceptionBean;
 
 import java.util.Map;
 import java.util.Set;
@@ -22,7 +22,7 @@ public class DefaultServiceRegistry implements ServiceRegistry{
         registeredServices.add(serviceName);
         Class<?>[] interfaces = service.getClass().getInterfaces();
         if(interfaces.length == 0){
-            throw new RpcError(RpcErrorBean.SERVICE_NOT_IMPLEMENTS_ANY_INTERFACES);
+            throw new RpcException(RpcExceptionBean.SERVICE_NOT_IMPLEMENTS_ANY_INTERFACES);
         }
         for(Class<?> i : interfaces){
             serviceMap.put(i.getCanonicalName(), service);
@@ -34,7 +34,7 @@ public class DefaultServiceRegistry implements ServiceRegistry{
     public synchronized Object getService(String serviceName) {
         Object service = serviceMap.get(serviceName);
         if(service == null){
-            throw new RpcError(RpcErrorBean.SERVICE_NOT_FOUND);
+            throw new RpcException(RpcExceptionBean.SERVICE_NOT_FOUND);
         }
         return service;
     }
