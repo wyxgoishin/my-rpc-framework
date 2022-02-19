@@ -13,7 +13,8 @@ public enum RpcExceptionBean {
     CLIENT_UNAVAILABLE("客户端功能不可用"),
     UNKNOWN_PROTOCOL("无法识别的协议包"),
     UNKNOWN_PACKAGE_CODE("无法识别的数据包类型"),
-    UNKNOWN_SERIALIZER("无法识别的序列化器类型");
+    UNKNOWN_SERIALIZER("无法识别的序列化器类型"),
+    SERIALIZAION_ERROR("序列化或反序列化过程中发生错误");
 
     private final String errorMessage;
 }

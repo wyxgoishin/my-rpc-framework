@@ -15,6 +15,7 @@ import rpc_core.codec.CommonDecoder;
 import rpc_core.codec.CommonEncoder;
 import rpc_core.registry.ServiceRegistry;
 import rpc_core.serializer.JsonSerializer;
+import rpc_core.serializer.KryoSerializer;
 
 @AllArgsConstructor
 public class NettyServer implements RpcServer {
@@ -41,7 +42,7 @@ public class NettyServer implements RpcServer {
                         protected void initChannel(SocketChannel socketChannel) {
                             ChannelPipeline pipeline = socketChannel.pipeline();
                             pipeline.addLast(new CommonDecoder())
-                                    .addLast(new CommonEncoder(new JsonSerializer()))
+                                    .addLast(new CommonEncoder(new KryoSerializer()))
                                     .addLast(new NettyServerHandler(serviceRegistry));
                         }
                     });

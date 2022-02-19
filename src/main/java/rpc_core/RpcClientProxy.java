@@ -19,12 +19,17 @@ public class RpcClientProxy implements InvocationHandler {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) {
-        RpcRequest rpcRequest = RpcRequest.builder()
-                    .interfaceName(method.getDeclaringClass().getName())
-                    .methodName(method.getName())
-                    .parameterTypes(method.getParameterTypes())
-                    .parameters(args)
-                    .build();
+        RpcRequest rpcRequest = new RpcRequest();
+        rpcRequest.setInterfaceName(method.getDeclaringClass().getName());
+        rpcRequest.setMethodName(method.getName());
+        rpcRequest.setParameterTypes(method.getParameterTypes());
+        rpcRequest.setParameters(args);
+//        RpcRequest rpcRequest = RpcRequest.builder()
+//                    .interfaceName(method.getDeclaringClass().getName())
+//                    .methodName(method.getName())
+//                    .parameterTypes(method.getParameterTypes())
+//                    .parameters(args)
+//                    .build();
         RpcResponse rpcResponse = (RpcResponse) rpcClient.sendRequest(rpcRequest);
         return rpcResponse.getData();
     }

@@ -5,12 +5,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.jackson.Jacksonized;
+import rpc_common.enumeration.RpcExceptionBean;
 
 import java.io.Serializable;
 
 @Data
-@Builder
-@Jacksonized
+// 因为 kryo 与 RpcRequest绑定要实例化它，而 builder 模式下无法这样做
+//@Builder
 public class RpcRequest implements Serializable {
     private static final long serialVersionUID = -1957686175929610806L;
     private String interfaceName;
