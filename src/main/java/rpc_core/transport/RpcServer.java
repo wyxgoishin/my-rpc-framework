@@ -5,6 +5,6 @@ import rpc_core.serializer.CommonSerializer;
 import rpc_core.transport.RpcEntity;
 
 public interface RpcServer extends RpcEntity {
-    void start(int port);
+    void start();
     <T> void publishService(Object service, String serviceName);
 }

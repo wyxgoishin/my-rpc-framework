@@ -1,11 +1,13 @@
-package service.impl;
+package example.service.impl;
 
 
+import example.service.HelloObject;
+import example.service.HelloService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import service.HelloObject;
-import service.HelloService;
+import rpc_core.annotation.Service;
 
+@Service
 public class HelloServiceImpl implements HelloService {
     private static final Logger logger = LoggerFactory.getLogger(HelloServiceImpl.class);
 

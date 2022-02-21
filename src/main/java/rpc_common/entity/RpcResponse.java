@@ -16,6 +16,7 @@ public class RpcResponse<T> implements Serializable {
     private ResponseStatusBean responseBean;
     private RpcExceptionBean rpcExceptionBean;
     private T data;
+    private String responseId;
 
     /*
     @Override
@@ -32,17 +33,19 @@ public class RpcResponse<T> implements Serializable {
 
      */
 
-    public static <K> RpcResponse<K> success(K data){
+    public static <K> RpcResponse<K> success(K data, String requestId){
         RpcResponse<K> response = new RpcResponse<>();
         response.setResponseBean(ResponseStatusBean.SUCCESS);
         response.setData(data);
+        response.setResponseId(requestId);
         return response;
     }
 
-    public static <K> RpcResponse<K> fail(RpcExceptionBean rpcExceptionBean){
+    public static <K> RpcResponse<K> fail(RpcExceptionBean rpcExceptionBean, String requestId){
         RpcResponse<K> response = new RpcResponse<>();
         response.setResponseBean(ResponseStatusBean.FAIL);
         response.setRpcExceptionBean(rpcExceptionBean);
+        response.setResponseId(requestId);
         return response;
     }
 }

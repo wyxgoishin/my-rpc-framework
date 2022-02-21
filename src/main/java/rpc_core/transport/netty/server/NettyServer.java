@@ -14,6 +14,7 @@ import rpc_core.codec.CommonDecoder;
 import rpc_core.codec.CommonEncoder;
 import rpc_core.provider.DefaultServiceProvider;
 import rpc_core.registry.NacosServiceRegistry;
+import rpc_core.hook.ShutdownHook;
 import rpc_core.serializer.CommonSerializer;
 import rpc_core.transport.AbstractRpcServer;
 
@@ -31,12 +32,14 @@ public class NettyServer extends AbstractRpcServer {
         this.port = port;
         serializer = CommonSerializer.getByCode(code);
         serviceRegistry = new NacosServiceRegistry();
-        serviceProvider = new DefaultServiceProvider();
+//        serviceProvider = new DefaultServiceProvider();
+        scanService();
     }
 
 
     @Override
-    public void start(int port) {
+    public void start() {
+        ShutdownHook.getShutdownHook().addClearAllHook();
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
         try{
@@ -56,7 +59,7 @@ public class NettyServer extends AbstractRpcServer {
                             ChannelPipeline pipeline = socketChannel.pipeline();
                             pipeline.addLast(new CommonDecoder())
                                     .addLast(new CommonEncoder(serializer))
-                                    .addLast(new NettyServerHandler(serviceProvider));
+                                    .addLast(new NettyServerHandler());
                         }
                     });
 

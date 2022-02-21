@@ -27,7 +27,7 @@ public interface CommonSerializer {
         } else if (code == 1){
             return new JsonSerializer();
         } else {
-            return new KryoSerializer();
+            return null;
         }
     }
 }

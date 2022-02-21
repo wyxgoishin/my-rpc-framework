@@ -6,16 +6,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rpc_common.entity.RpcResponse;
 import rpc_common.enumeration.RpcExceptionBean;
+import rpc_common.factory.SingletonFactory;
 
 public class NettyClientHandler extends SimpleChannelInboundHandler<RpcResponse> {
     private static final Logger logger = LoggerFactory.getLogger(NettyClientHandler.class);
+    private final UnprocessedRequests unprocessedRequests = SingletonFactory.getInstance(UnprocessedRequests.class);
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, RpcResponse rpcResponse) {
         logger.info(String.format("客户端收到消息：%s", rpcResponse));
-        AttributeKey<RpcResponse> key = AttributeKey.valueOf("rpcResponse");
-        ctx.channel().attr(key).set(rpcResponse);
-        ctx.channel().close();
+        unprocessedRequests.complete(rpcResponse);
     }
 
     @Override

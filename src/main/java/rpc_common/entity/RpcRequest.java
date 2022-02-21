@@ -1,11 +1,6 @@
 package rpc_common.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.extern.jackson.Jacksonized;
-import rpc_common.enumeration.RpcExceptionBean;
 
 import java.io.Serializable;
 
@@ -14,10 +9,14 @@ import java.io.Serializable;
 //@Builder
 public class RpcRequest implements Serializable {
     private static final long serialVersionUID = -1957686175929610806L;
-    private String interfaceName;
+    /*
+    待调用服务接口名称，默认为接口的名称
+     */
+    private String serviceName;
     private String methodName;
     private Class<?>[] parameterTypes;
     private Object[] parameters;
+    private String requestId;
 
     /* out.writeObject(clazz)会报错，暂时没查明原因
     @Override

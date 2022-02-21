@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rpc_common.entity.RpcRequest;
+import rpc_common.enumeration.RpcExceptionBean;
 
 import java.io.IOException;
 
@@ -19,7 +20,7 @@ public class JsonSerializer implements CommonSerializer{
         try{
             return objectMapper.writeValueAsBytes(obj);
         } catch (JsonProcessingException e) {
-            logger.error("序列化时发生错误：", e);
+            logger.error("{} ：", RpcExceptionBean.SERIALIZAION_ERROR.getErrorMessage(), e);
             return null;
         }
     }
@@ -33,7 +34,7 @@ public class JsonSerializer implements CommonSerializer{
             }
             return obj;
         } catch (IOException e) {
-            logger.error("反序列化时发生错误：", e);
+            logger.error("{} ：", RpcExceptionBean.SERIALIZAION_ERROR.getErrorMessage(), e);
         }
         return null;
     }
