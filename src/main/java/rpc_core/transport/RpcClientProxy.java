@@ -1,6 +1,7 @@
 package rpc_core.transport;
 
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rpc_common.entity.RpcRequest;
@@ -18,8 +19,9 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 @Data
+@Slf4j
 public class RpcClientProxy implements InvocationHandler {
-    private static final Logger logger = LoggerFactory.getLogger(RpcClientProxy.class);
+//    private static final Logger log = LoggerFactory.getLogger(RpcClientProxy.class);
     private RpcClient rpcClient;
     private String serviceName;
 
@@ -56,7 +58,7 @@ public class RpcClientProxy implements InvocationHandler {
                 CompletableFuture<RpcResponse> completableFuture = (CompletableFuture<RpcResponse>) rpcClient.sendRequest(rpcRequest);
                 rpcResponse = completableFuture.get();
             } catch (ExecutionException | InterruptedException e) {
-                logger.error(RpcExceptionBean.SERVICE_RUNTIME_EXCEPTION.getErrorMessage());
+                log.error(RpcExceptionBean.SERVICE_RUNTIME_EXCEPTION.getErrorMessage());
                 rpcResponse = RpcResponse.fail(RpcExceptionBean.SERVICE_RUNTIME_EXCEPTION, rpcRequest.getRequestId());
             }
         }

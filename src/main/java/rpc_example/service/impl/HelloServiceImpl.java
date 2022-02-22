@@ -1,8 +1,8 @@
-package example.service.impl;
+package rpc_example.service.impl;
 
 
-import example.service.HelloObject;
-import example.service.HelloService;
+import rpc_example.service.HelloObject;
+import rpc_example.service.HelloService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rpc_core.annotation.Service;

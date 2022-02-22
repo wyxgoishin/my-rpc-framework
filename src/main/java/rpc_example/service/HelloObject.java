@@ -1,4 +1,4 @@
-package example.service;
+package rpc_example.service;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

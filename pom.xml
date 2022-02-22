@@ -50,6 +50,13 @@
             <artifactId>nacos-client</artifactId>
             <version>1.4.2</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>1.29</version>
+        </dependency>
+
     </dependencies>
 
     <properties>

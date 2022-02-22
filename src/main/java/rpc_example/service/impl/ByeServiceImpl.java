@@ -1,6 +1,6 @@
-package example.service.impl;
+package rpc_example.service.impl;
 
-import example.service.ByeService;
+import rpc_example.service.ByeService;
 import rpc_core.annotation.Service;
 
 @Service(name = "bye")

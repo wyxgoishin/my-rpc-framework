@@ -2,7 +2,7 @@ package rpc_core.serializer;
 
 import rpc_common.enumeration.SerializerCode;
 
-public interface CommonSerializer {
+public interface Serializer {
     SerializerCode DEFAULT_SERIALIZER_CODE = SerializerCode.KRYO;
 
     byte[] serialize(Object obj);
@@ -11,7 +11,7 @@ public interface CommonSerializer {
 
     int getCode();
 
-    static CommonSerializer getByCode(SerializerCode serializerCode){
+    static Serializer getByCode(SerializerCode serializerCode){
         if (serializerCode == SerializerCode.KRYO) {
             return new KryoSerializer();
         } else if (serializerCode == SerializerCode.JSON){
@@ -21,7 +21,7 @@ public interface CommonSerializer {
         }
     }
 
-    static CommonSerializer getByCode(int code){
+    static Serializer getByCode(int code){
         if (code == 0){
             return new KryoSerializer();
         } else if (code == 1){

@@ -9,6 +9,10 @@ import rpc_core.discovery.ServiceDiscovery;
 public class AbstractRpcClient extends AbstractRpcEntity implements RpcClient{
     protected ServiceDiscovery serviceDiscovery;
 
+    public AbstractRpcClient(){
+        super();
+    }
+
     @Override
     public Object sendRequest(RpcRequest rpcRequest) {
         throw new RpcException(RpcExceptionBean.SEND_MESSAGE_EXCEPTION);

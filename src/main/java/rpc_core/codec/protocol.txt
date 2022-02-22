@@ -1,15 +1,16 @@
 以下为该包下发送/接收的数据编码格式说明：
 
-+---------------+---------------+-----------------+-------------+
-|  Magic Number |  Package Type | Serializer Type | Data Length |
-|    4 bytes    |    4 bytes    |     4 bytes     |   4 bytes   |
-+---------------+---------------+-----------------+-------------+
-|                          Data Bytes                           |
-|                   Length: ${Data Length}                      |
-+---------------------------------------------------------------+
++---------------+---------------+-----------------+-----------------+-------------+
+|  Magic Number |  Package Type | Serializer Type | Compressor Type | Data Length |
+|    4 bytes    |    4 bytes    |     4 bytes     |     4 bytes     |   4 bytes   |
++---------------+---------------+-----------------+-----------------+-------------+
+|                                    Data Bytes                                   |
+|                              Length: ${Data Length}                             |
++-------------------------------------------------------------------+-------------+
 
 Magic Number : 表明这是一个协议包
 Package Type : 表明是调用请求还是响应请求
 Serializer Type : 表明数据的序列化方式
+Compressor Type: 表明数据的压缩类型
 Data Length : 表明数据的长度，防止粘包
 Data Bytes : 表明字节形式的数组

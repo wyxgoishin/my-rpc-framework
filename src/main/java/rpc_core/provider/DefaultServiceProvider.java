@@ -1,5 +1,6 @@
 package rpc_core.provider;
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rpc_common.exception.RpcException;
@@ -9,8 +10,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Slf4j
 public class DefaultServiceProvider implements ServiceProvider {
-    private static final Logger logger = LoggerFactory.getLogger(DefaultServiceProvider.class);
+//    private static final Logger log = LoggerFactory.getLogger(DefaultServiceProvider.class);
 
     private static final Map<String, Object> serviceMap = new ConcurrentHashMap<>();
     private static final Set<String> registeredServices = ConcurrentHashMap.newKeySet();
@@ -20,7 +22,7 @@ public class DefaultServiceProvider implements ServiceProvider {
         if(registeredServices.contains(serviceName)) return;
         registeredServices.add(serviceName);
         serviceMap.put(serviceName, service);
-        logger.info("注册服务：{}", serviceName);
+        log.info("注册服务：{}", serviceName);
     }
 
     @Override

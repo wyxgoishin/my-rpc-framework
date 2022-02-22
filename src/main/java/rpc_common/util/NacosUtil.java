@@ -3,6 +3,8 @@ package rpc_common.util;
 import com.alibaba.nacos.api.exception.NacosException;
 import com.alibaba.nacos.api.naming.NamingFactory;
 import com.alibaba.nacos.api.naming.NamingService;
+import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rpc_common.enumeration.RpcExceptionBean;
@@ -12,8 +14,9 @@ import java.net.InetSocketAddress;
 import java.util.HashSet;
 import java.util.Set;
 
+@Slf4j
 public class NacosUtil {
-    private static final Logger logger = LoggerFactory.getLogger(NacosUtil.class);
+//    private static final Logger log = LoggerFactory.getLogger(NacosUtil.class);
     private static final String SERVER_ADDR = "127.0.0.1:8848";
     private static final Set<String> serviceNames = new HashSet<>();
     private static final NamingService namingService;
@@ -30,7 +33,7 @@ public class NacosUtil {
         try {
             return NamingFactory.createNamingService(SERVER_ADDR);
         } catch (NacosException e) {
-            logger.error("{} ：", RpcExceptionBean.CONNECT_NACOS_FAILED.getErrorMessage(), e);
+            log.error("{} ：", RpcExceptionBean.CONNECT_NACOS_FAILED.getErrorMessage(), e);
             throw new RpcException(RpcExceptionBean.CONNECT_NACOS_FAILED);
         }
     }
@@ -46,9 +49,9 @@ public class NacosUtil {
             for (String serviceName : serviceNames) {
                 try {
                     namingService.deregisterInstance(serviceName, address.getHostName(), address.getPort());
-                    logger.info("注销服务 {} - {}:{}", serviceName, address.getHostName(), address.getPort());
+                    log.info("注销服务 {} - {}:{}", serviceName, address.getHostName(), address.getPort());
                 } catch (NacosException e) {
-                    logger.error("{} {}", serviceName, RpcExceptionBean.DEREGISTER_NACOS_INSTANCE_FAILED, e);
+                    log.error("{} {}", serviceName, RpcExceptionBean.DEREGISTER_NACOS_INSTANCE_FAILED, e);
                 }
             }
             /*  这行也不需要，因为执行完后 JVM 都关了

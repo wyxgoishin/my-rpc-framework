@@ -1,6 +1,7 @@
 package rpc_common.entity;
 
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
 
@@ -17,6 +18,7 @@ public class RpcRequest implements Serializable {
     private Class<?>[] parameterTypes;
     private Object[] parameters;
     private String requestId;
+    private boolean isHeartBeat;
 
     /* out.writeObject(clazz)会报错，暂时没查明原因
     @Override

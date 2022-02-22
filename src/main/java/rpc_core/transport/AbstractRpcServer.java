@@ -1,17 +1,26 @@
 package rpc_core.transport;
 
+import org.yaml.snakeyaml.Yaml;
+import rpc_common.enumeration.CompressorCode;
 import rpc_common.enumeration.RpcExceptionBean;
+import rpc_common.enumeration.SerializerCode;
 import rpc_common.exception.RpcException;
 import rpc_common.factory.SingletonFactory;
 import rpc_common.util.ReflectUtil;
+import rpc_core.annotation.PropertySource;
+import rpc_core.compresser.Compressor;
 import rpc_core.provider.DefaultServiceProvider;
 import rpc_core.provider.ServiceProvider;
+import rpc_core.registry.NacosServiceRegistry;
 import rpc_core.registry.ServiceRegistry;
 import rpc_core.annotation.Service;
 import rpc_core.annotation.ServiceScan;
+import rpc_core.serializer.Serializer;
 
+import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.net.InetSocketAddress;
-import java.util.Set;
+import java.util.*;
 
 public abstract class AbstractRpcServer extends AbstractRpcEntity implements RpcServer {
     protected String host;
@@ -30,6 +39,11 @@ public abstract class AbstractRpcServer extends AbstractRpcEntity implements Rpc
         serviceRegistry.register(serviceName, new InetSocketAddress(host, port));
     }
 
+    public AbstractRpcServer(){
+        super();
+        scanService();
+    }
+
     public void scanService(){
         String mainClassName = ReflectUtil.getBootClassByStackTrace();
         Class<?> startClass;
@@ -39,7 +53,7 @@ public abstract class AbstractRpcServer extends AbstractRpcEntity implements Rpc
                 return;
             }
         } catch (ClassNotFoundException e) {
-            logger.error("{}:", RpcExceptionBean.LOAD_BOOT_CLASS_FAILED.getErrorMessage(), e);
+            log.error("{}:", RpcExceptionBean.LOAD_BOOT_CLASS_FAILED.getErrorMessage(), e);
             throw new RpcException(RpcExceptionBean.LOAD_BOOT_CLASS_FAILED);
         }
 
@@ -58,7 +72,7 @@ public abstract class AbstractRpcServer extends AbstractRpcEntity implements Rpc
                 try {
                     obj = clazz.newInstance();
                 } catch (InstantiationException | IllegalAccessException e) {
-                    logger.error("创建服务类 {} 失败", clazz.getCanonicalName(), e);
+                    log.error("创建服务类 {} 失败", clazz.getCanonicalName(), e);
                 }
                 if("".equals(serviceName)){
                     Class<?>[] interfaces = clazz.getInterfaces();

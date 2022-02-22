@@ -1,18 +1,16 @@
 package rpc_core.serializer;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.exc.StreamReadException;
-import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import rpc_common.entity.RpcRequest;
 import rpc_common.enumeration.RpcExceptionBean;
 
 import java.io.IOException;
 
-public class JsonSerializer implements CommonSerializer{
-    private static final Logger logger = LoggerFactory.getLogger(JsonSerializer.class);
+@Slf4j
+public class JsonSerializer implements Serializer {
+//    private static final Logger log = LoggerFactory.getLogger(JsonSerializer.class);
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
@@ -20,7 +18,7 @@ public class JsonSerializer implements CommonSerializer{
         try{
             return objectMapper.writeValueAsBytes(obj);
         } catch (JsonProcessingException e) {
-            logger.error("{} ：", RpcExceptionBean.SERIALIZAION_ERROR.getErrorMessage(), e);
+            log.error("{} ：", RpcExceptionBean.SERIALIZAION_ERROR.getErrorMessage(), e);
             return null;
         }
     }
@@ -34,7 +32,7 @@ public class JsonSerializer implements CommonSerializer{
             }
             return obj;
         } catch (IOException e) {
-            logger.error("{} ：", RpcExceptionBean.SERIALIZAION_ERROR.getErrorMessage(), e);
+            log.error("{} ：", RpcExceptionBean.SERIALIZAION_ERROR.getErrorMessage(), e);
         }
         return null;
     }

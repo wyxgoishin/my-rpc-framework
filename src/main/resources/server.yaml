@@ -1,0 +1,5 @@
+host: localhost
+port: 9000
+serializer: kryo
+compressor: gzip
+serviceRegistry: nacos

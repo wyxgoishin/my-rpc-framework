@@ -20,9 +20,9 @@ public enum RpcExceptionBean {
     RESPONSE_NOT_MATCH("请求与响应信息 ID 不匹配"),
     // 序列化/反序列化相关
     SERIALIZER_NOT_EXISTS("未设置序列化/反序列化器;"),
-    UNKNOWN_PROTOCOL("无法识别的协议包;"),
-    UNKNOWN_PACKAGE_CODE("无法识别的数据包类型;"),
-    UNKNOWN_SERIALIZER("无法识别的序列化器类型;"),
+    UNKNOWN_PROTOCOL("无法识别的协议包"),
+    UNKNOWN_PACKAGE_CODE("无法识别的数据包类型"),
+    UNKNOWN_SERIALIZER("无法识别的序列化器类型"),
     SERIALIZAION_ERROR("序列化或反序列化过程中发生错误;"),
     // Nacos 相关
     CONNECT_NACOS_FAILED("连接到 Nacos 时发生错误;"),
@@ -30,7 +30,10 @@ public enum RpcExceptionBean {
     LOOKUP_SERVICE_IN_NACOS_FAILED("在 Nacos 中查找对应服务时发生错误;"),
     DEREGISTER_NACOS_INSTANCE_FAILED("服务注销失败;"),
     // 加载服务相关
-    LOAD_BOOT_CLASS_FAILED("启动类加载错误;"),;
+    LOAD_BOOT_CLASS_FAILED("启动类加载错误;"),
+    // 其他
+    UNKNOWN_SERVICE_REGISTRTY("未知的服务注册中心"),
+    UNKNOWN_COMPRESSOR("未知的压缩类型");
 
     private final String errorMessage;
 }

@@ -1,14 +1,16 @@
 package rpc_common.factory;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.concurrent.*;
 
+@Slf4j
 public class ThreadPoolFactory {
-    private final static Logger logger = LoggerFactory.getLogger(ThreadPoolFactory.class);
+//    private final static Logger log = LoggerFactory.getLogger(ThreadPoolFactory.class);
     private static final int CORE_POOL_SIZE = 10;
     private static final int MAXIMUM_POOL_SIZE_SIZE = 100;
     private static final int KEEP_ALIVE_TIME = 1;
@@ -48,15 +50,15 @@ public class ThreadPoolFactory {
     }
 
     public static void shutDownAll() {
-        logger.info("关闭所有线程池...");
+        log.info("关闭所有线程池...");
         threadPollsMap.entrySet().parallelStream().forEach(entry -> {
             ExecutorService executorService = entry.getValue();
             executorService.shutdown();
-            logger.info("关闭线程池 [{}] [{}]", entry.getKey(), executorService.isTerminated());
+            log.info("关闭线程池 [{}] [{}]", entry.getKey(), executorService.isTerminated());
             try {
                 executorService.awaitTermination(10, TimeUnit.SECONDS);
             } catch (InterruptedException ie) {
-                logger.error("关闭线程池失败！");
+                log.error("关闭线程池失败！");
                 executorService.shutdownNow();
             }
         });

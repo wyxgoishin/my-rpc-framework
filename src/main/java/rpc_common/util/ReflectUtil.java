@@ -1,5 +1,6 @@
 package rpc_common.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,8 +16,9 @@ import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+@Slf4j
 public class ReflectUtil {
-    private static final Logger logger = LoggerFactory.getLogger(ReflectUtil.class);
+//    private static final Logger log = LoggerFactory.getLogger(ReflectUtil.class);
 
     private static final String FILE = "file";
     private static final String JAR = "jar";
@@ -85,7 +87,7 @@ public class ReflectUtil {
                 }
             }
         } catch (IOException | ClassNotFoundException e) {
-            logger.error("添加用户自定义视图类错误：找不到此类的.class文件", e);
+            log.error("添加用户自定义视图类错误：找不到此类的.class文件", e);
         }
         return classes;
     }
@@ -94,7 +96,7 @@ public class ReflectUtil {
                                                          boolean isRecursive, Set<Class<?>> classes) {
         File dir = new File(packagePath);
         if(!dir.exists() || !dir.isDirectory()){
-            logger.warn("用户定义的包名"  + packageName + "不存在或其下没有任何文件");
+            log.warn("用户定义的包名"  + packageName + "不存在或其下没有任何文件");
         }
         /*
         自定义过滤规则:如果要递归查找且当前路径为一文件夹或者是 Java 字节码文件
@@ -116,7 +118,7 @@ public class ReflectUtil {
                      */
                     classes.add(Thread.currentThread().getContextClassLoader().loadClass(packageName + "." + className));
                 } catch (ClassNotFoundException e) {
-                    logger.error("添加用户自定义视图类错误：找不到此类的.class文件", e);
+                    log.error("添加用户自定义视图类错误：找不到此类的.class文件", e);
                 }
             }
         }

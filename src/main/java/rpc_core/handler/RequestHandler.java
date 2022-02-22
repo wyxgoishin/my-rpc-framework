@@ -1,5 +1,6 @@
 package rpc_core.handler;
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rpc_common.entity.RpcRequest;
@@ -12,15 +13,16 @@ import rpc_core.provider.ServiceProvider;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+@Slf4j
 public class RequestHandler {
-    private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
+//    private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
     private static final ServiceProvider serviceProvider = SingletonFactory.getInstance(DefaultServiceProvider.class);
 
     public Object handle(RpcRequest rpcRequest){
         Object service = serviceProvider.getServiceProvider(rpcRequest.getServiceName());
         Object result = invokeTargetMethod(rpcRequest, service);
         if(!(result instanceof RpcResponse)){
-            logger.info("调用 {} 服务接口的 {} 方法成功", rpcRequest.getServiceName(), rpcRequest.getMethodName());
+            log.info("调用 {} 服务接口的 {} 方法成功", rpcRequest.getServiceName(), rpcRequest.getMethodName());
         }
         return result;
     }

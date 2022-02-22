@@ -5,8 +5,11 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.compression.Bzip2Decoder;
+import io.netty.handler.codec.compression.Bzip2Encoder;
 import rpc_common.entity.RpcRequest;
 import rpc_common.entity.RpcResponse;
+import rpc_common.enumeration.CompressorCode;
 import rpc_common.enumeration.RpcExceptionBean;
 import rpc_common.enumeration.SerializerCode;
 import rpc_common.exception.RpcException;
@@ -14,8 +17,9 @@ import rpc_common.factory.SingletonFactory;
 import rpc_core.balancer.LoadBalancer;
 import rpc_core.codec.CommonDecoder;
 import rpc_core.codec.CommonEncoder;
+import rpc_core.compresser.Compressor;
 import rpc_core.discovery.NacosServiceDiscovery;
-import rpc_core.serializer.CommonSerializer;
+import rpc_core.serializer.Serializer;
 import rpc_core.transport.AbstractRpcClient;
 
 import java.net.InetSocketAddress;
@@ -39,31 +43,40 @@ public class NettyClient extends AbstractRpcClient {
     }
 
     public NettyClient(){
-        this(DEFAULT_SERIALIZER_CODE.getCode(), null);
+        this(DEFAULT_SERIALIZER_CODE.getCode(), DEFAULT_COMPRESSOR_CODE.getCode(), null);
     }
 
-    public NettyClient(int code){
-        this(code, null);
+    public NettyClient(int serializerCode){
+        this(serializerCode, DEFAULT_COMPRESSOR_CODE.getCode(), null);
     }
 
     public NettyClient(SerializerCode serializerCode){
-        this(serializerCode.getCode(), null);
+        this(serializerCode.getCode(), DEFAULT_SERIALIZER_CODE.getCode(), null);
     }
 
-    public NettyClient(SerializerCode serializerCode, LoadBalancer loadBalancer){
-        this(serializerCode.getCode(), loadBalancer);
+    public NettyClient(SerializerCode serializerCode, CompressorCode compressorCode){
+        this(serializerCode.getCode(), compressorCode.getCode(), null);
     }
 
-    public NettyClient(int serializerCode, LoadBalancer loadBalancer){
-        serializer = CommonSerializer.getByCode(serializerCode);
+    public NettyClient(int serializerCode, int compressorCode){
+        this(serializerCode, compressorCode, null);
+    }
+
+    public NettyClient(SerializerCode serializerCode, CompressorCode compressorCode, LoadBalancer loadBalancer){
+        this(serializerCode.getCode(), compressorCode.getCode(), loadBalancer);
+    }
+
+    public NettyClient(int serializerCode, int compressorCode, LoadBalancer loadBalancer){
+        serializer = Serializer.getByCode(serializerCode);
+        compressor = Compressor.getByCode(compressorCode);
         serviceDiscovery = new NacosServiceDiscovery(loadBalancer);
         bootstrap.handler(new ChannelInitializer<SocketChannel>() {
-                    @Override
-                    protected void initChannel(SocketChannel socketChannel) {
-            ChannelPipeline pipeline = socketChannel.pipeline();
-            pipeline.addLast(new CommonDecoder())
-                    .addLast(new CommonEncoder(serializer))
-                    .addLast(new NettyClientHandler());
+            @Override
+            protected void initChannel(SocketChannel socketChannel) {
+                ChannelPipeline pipeline = socketChannel.pipeline();
+                pipeline.addLast(new CommonDecoder())
+                        .addLast(new CommonEncoder(serializer, compressor))
+                        .addLast(new NettyClientHandler());
             }
         });
     }
@@ -71,7 +84,7 @@ public class NettyClient extends AbstractRpcClient {
     @Override
     public CompletableFuture<RpcResponse> sendRequest(RpcRequest rpcRequest) {
         if(serializer == null){
-            logger.error(RpcExceptionBean.SERIALIZER_NOT_EXISTS.getErrorMessage());
+            log.error(RpcExceptionBean.SERIALIZER_NOT_EXISTS.getErrorMessage());
             throw new RpcException(RpcExceptionBean.SERIALIZER_NOT_EXISTS);
         }
         CompletableFuture<RpcResponse> resultFuture = new CompletableFuture<>();
@@ -81,15 +94,15 @@ public class NettyClient extends AbstractRpcClient {
             group.shutdownGracefully();
             return null;
         }
-        logger.info("客户端连接到服务器 {}:{}", inetSocketAddress.getHostName(), inetSocketAddress.getPort());
+        log.info("客户端连接到服务器 {}:{}", inetSocketAddress.getHostName(), inetSocketAddress.getPort());
         unprocessedRequests.put(rpcRequest.getRequestId(), resultFuture);
         channel.writeAndFlush(rpcRequest).addListener((ChannelFutureListener) future1 -> {
             if(future1.isSuccess()){
-                logger.info(String.format("客户端发送消息：%s", rpcRequest));
+                log.info(String.format("客户端发送消息：%s", rpcRequest));
             }else{
                 future1.channel().close();
                 resultFuture.completeExceptionally(future1.cause());
-                logger.error("{} ：{}", RpcExceptionBean.SEND_MESSAGE_EXCEPTION, future1.cause());
+                log.error("{}：", RpcExceptionBean.SEND_MESSAGE_EXCEPTION, future1.cause());
             }
         });
         /* 先前的阻塞版
@@ -120,16 +133,16 @@ public class NettyClient extends AbstractRpcClient {
             CompletableFuture<Channel> completableFuture = new CompletableFuture<>();
             bootstrap.connect(inetSocketAddress).addListener((ChannelFutureListener) future -> {
                 if(future.isSuccess()){
-                    logger.info("客户端连接成功");
+                    log.info("客户端连接成功");
                     completableFuture.complete(future.channel());
                 }else{
-                    logger.error(RpcExceptionBean.CONNECTION_EXCEPTION.getErrorMessage());
+                    log.error(RpcExceptionBean.CONNECTION_EXCEPTION.getErrorMessage());
                 }
             });
             channel = completableFuture.get();
             channelMap.put(key, channel);
         } catch (ExecutionException | InterruptedException e) {
-            logger.error("{}: ", RpcExceptionBean.CONNECTION_EXCEPTION.getErrorMessage(), e);
+            log.error("{}: ", RpcExceptionBean.CONNECTION_EXCEPTION.getErrorMessage(), e);
             return null;
         }
         return channel;
