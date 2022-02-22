@@ -6,7 +6,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /*
-   放在服务类上，表明该服务的名称
+annotated above service implementation class to show that is a service-impl
+so that it can be registered if it is scanned
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

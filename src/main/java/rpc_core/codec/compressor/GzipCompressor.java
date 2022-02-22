@@ -11,7 +11,6 @@ import java.util.zip.GZIPOutputStream;
 
 @Slf4j
 public class GzipCompressor implements Compressor {
-//    private static final Logger log = LoggerFactory.getLogger(GzipCompresser.class);
     private static final int BUFFER_SIZE = 4 * 1024;
 
     @Override
@@ -27,8 +26,8 @@ public class GzipCompressor implements Compressor {
             gzip.finish();
             return out.toByteArray();
         } catch (IOException e) {
-            log.error("gzip 压缩失败");
-            throw new RuntimeException("gzip 压缩失败");
+            log.error("gzip compression failed", e);
+            throw new RuntimeException("gzip compression failed");
         }
     }
 
@@ -39,16 +38,16 @@ public class GzipCompressor implements Compressor {
             throw new NullPointerException("input byte array is null");
         }
         try (ByteArrayOutputStream out = new ByteArrayOutputStream();
-            GZIPInputStream ungzip = new GZIPInputStream(new ByteArrayInputStream(bytes))){
+            GZIPInputStream unzip = new GZIPInputStream(new ByteArrayInputStream(bytes))){
             byte[] buffer = new byte[BUFFER_SIZE];
             int n;
-            while((n = ungzip.read(buffer)) != -1){
+            while((n = unzip.read(buffer)) != -1){
                 out.write(buffer, 0, n);
             }
             return out.toByteArray();
         } catch (IOException e) {
-            log.error("gzip 解压缩失败");
-            throw new RuntimeException("gzip 解压缩失败");
+            log.error("gzip decompression failed", e);
+            throw new RuntimeException("gzip decompression failed");
         }
     }
 

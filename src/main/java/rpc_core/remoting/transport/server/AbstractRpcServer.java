@@ -44,7 +44,7 @@ public abstract class AbstractRpcServer extends AbstractRpcEntity implements Rpc
 
         String basePackage = bootClass.getAnnotation(ServiceScan.class).value();
         /*
-        “.”表示以启动类所在包作为扫描包
+        "." means using the package where boot class locates as package name
          */
         if("".equals(basePackage)){
             basePackage = bootClassName.substring(0, bootClassName.lastIndexOf("."));
@@ -57,7 +57,7 @@ public abstract class AbstractRpcServer extends AbstractRpcEntity implements Rpc
                 try {
                     obj = clazz.newInstance();
                 } catch (InstantiationException | IllegalAccessException e) {
-                    log.error("创建服务类 {} 失败", clazz.getCanonicalName(), e);
+                    log.error("create service instance {} failed", clazz.getCanonicalName(), e);
                 }
                 if("".equals(serviceName)){
                     Class<?>[] interfaces = clazz.getInterfaces();

@@ -40,7 +40,7 @@ public class NettyServer extends AbstractRpcServer {
 
     public NettyServer(String host, int port, ServiceRegistry serviceRegistry, SerializerEnum serializerEnum, CompressorEnum compressorEnum){
         if(serviceRegistry == null){
-            throw new RpcException(RpcExceptionBean.BOOT_SERVER_FAILED);
+            throw new RpcException(RpcExceptionBean.SERVICE_REGISTRY_NOT_EXISTS);
         }
         this.host = host;
         this.port = port;
@@ -64,11 +64,10 @@ public class NettyServer extends AbstractRpcServer {
             serverBootstrap.group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel.class)
                     .handler(new LoggingHandler(LogLevel.INFO))
-                    // 对应TCP/IP协议的listen函数中的backlog函数，用来初始化服务端可连接队列
+                    // backlog() function in tcp/ip protocol, used to initialize connectable queue in server
                     .option(ChannelOption.SO_BACKLOG, 256)
                     .childOption(ChannelOption.SO_KEEPALIVE, true)
-                    // 禁用 Nagle 算法，表示允许小包发送（TPC/IP协议中默认开启Nagle算法，它通过减少需要传输的数据包来优化网络）
-                    .childOption(ChannelOption.TCP_NODELAY, true)
+                    // deactivate Nagle algorithm and allow sending small pack(as our request pack is not so big)
                     .childOption(ChannelOption.TCP_NODELAY, true)
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
@@ -76,7 +75,7 @@ public class NettyServer extends AbstractRpcServer {
                             ChannelPipeline pipeline = socketChannel.pipeline();
                             pipeline.addLast(new CommonDecoder())
                                     .addLast(new CommonEncoder(serializer, compressor))
-                                    .addLast(new IdleStateHandler(3000, 0, 0, TimeUnit.SECONDS))
+                                    .addLast(new IdleStateHandler(30, 0, 0, TimeUnit.SECONDS))
                                     .addLast(new NettyServerHandler());
                         }
                     });
@@ -84,7 +83,7 @@ public class NettyServer extends AbstractRpcServer {
             ChannelFuture future = serverBootstrap.bind(port).sync();
             future.channel().closeFuture().sync();
         } catch (InterruptedException e){
-            log.info("{} ：", RpcExceptionBean.BOOT_SERVER_FAILED.getErrorMessage(), e);
+            log.info("{}", RpcExceptionBean.BOOT_SERVER_FAILED.getErrorMessage(), e);
         } finally {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
@@ -94,8 +93,8 @@ public class NettyServer extends AbstractRpcServer {
     @Override
     public <T> void publishService(Object service, String serviceName) {
         if(serializer == null){
-            log.error(RpcExceptionBean.SERIALIZER_NOT_EXISTS.getErrorMessage());
-            throw new RpcException(RpcExceptionBean.SERIALIZER_NOT_EXISTS);
+            log.error("serializer not set yet");
+            throw new RuntimeException("serializer not set yet");
         }
         super.publishService(service, serviceName);
     }

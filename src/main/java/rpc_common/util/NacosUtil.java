@@ -16,12 +16,11 @@ import java.util.Set;
 
 @Slf4j
 public class NacosUtil {
-//    private static final Logger log = LoggerFactory.getLogger(NacosUtil.class);
     private static final String DEFAULT_SERVER_ADDRESS = "127.0.0.1:8848";
     private static final Set<String> serviceNames = new HashSet<>();
     private static NamingService namingService;
     /*
-        因为会通过多进程而非线程形式开启多个 Netty 服务器，所以每个进程中 Netty 服务器对应的 ip:port 是固定的，不存在多线程删不完问题
+    As multi servers will be opened in fashion of multi progress, thus the ip and host of corresponding server is static
      */
     private static InetSocketAddress address;
 
@@ -34,8 +33,8 @@ public class NacosUtil {
             namingService = NamingFactory.createNamingService(serverAddress);
             return namingService;
         } catch (NacosException e) {
-            log.error("{} ：", RpcExceptionBean.CONNECT_NACOS_FAILED.getErrorMessage(), e);
-            throw new RpcException(RpcExceptionBean.CONNECT_NACOS_FAILED);
+            log.error("get nacos naming service failed", e);
+            throw new RuntimeException("get nacos naming service failed");
         }
     }
 
@@ -50,14 +49,11 @@ public class NacosUtil {
             for (String serviceName : serviceNames) {
                 try {
                     namingService.deregisterInstance(serviceName, address.getHostName(), address.getPort());
-                    log.info("注销服务 {} - {}:{}", serviceName, address.getHostName(), address.getPort());
+                    log.info("deregister service {} - {}:{}", serviceName, address.getHostName(), address.getPort());
                 } catch (NacosException e) {
-                    log.error("{} {}", serviceName, RpcExceptionBean.DEREGISTER_NACOS_INSTANCE_FAILED, e);
+                    log.error("deregister {} from nacos failed", serviceName, e);
                 }
             }
-            /*  这行也不需要，因为执行完后 JVM 都关了
-                serviceNames.clear();
-             */
         }
     }
 }

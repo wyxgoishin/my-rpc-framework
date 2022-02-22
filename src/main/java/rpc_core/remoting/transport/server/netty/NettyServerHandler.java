@@ -20,10 +20,10 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<RpcRequest> 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, RpcRequest rpcRequest) {
         if(rpcRequest.isHeartBeat()){
-            log.info("服务器收到客户端的心跳包...");
+            log.info("server get heart beat pack from client...");
             return;
         }
-        log.info("服务器接收到请求：{}", rpcRequest);
+        log.info("server get request[{}]", rpcRequest);
         Object result = requestHandler.handle(rpcRequest);
         ChannelFuture future = ctx.writeAndFlush(RpcResponse.success(result, rpcRequest.getRequestId()));
         future.addListener(ChannelFutureListener.CLOSE);
@@ -31,7 +31,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<RpcRequest> 
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        log.error("{} : ", RpcExceptionBean.PROCESS_SERVICE_EXCEPTION.getErrorMessage(), cause);
+        log.error("{}", RpcExceptionBean.PROCESS_SERVICE_EXCEPTION.getErrorMessage(), cause);
         ctx.close();
     }
 
@@ -40,7 +40,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<RpcRequest> 
         if(evt instanceof IdleStateEvent){
             IdleState state = ((IdleStateEvent) evt).state();
             if(state == IdleState.READER_IDLE){
-                log.info("长时间未收到客户端的心跳包，断开连接...");
+                log.info("not received heart beat pack from client for a long time and will close the connection...");
                 ctx.close();
             }
         }

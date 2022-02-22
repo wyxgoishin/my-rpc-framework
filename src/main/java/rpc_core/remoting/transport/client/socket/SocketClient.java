@@ -34,7 +34,7 @@ public class SocketClient extends AbstractRpcClient {
 
     public SocketClient(ServiceDiscovery serviceDiscovery, SerializerEnum serializerEnum, CompressorEnum compressorEnum){
         if(serviceDiscovery == null){
-            throw new RpcException(RpcExceptionBean.BOOT_CLIENT_FAILED);
+            throw new RpcException(RpcExceptionBean.SERVICE_DISCOVERY_NOT_EXISTS);
         }
         this.serializer = Serializer.getByEnum(serializerEnum);
         this.compressor = Compressor.getByEnum(compressorEnum);
@@ -50,8 +50,8 @@ public class SocketClient extends AbstractRpcClient {
             CommonEncoder.encodeAndWriteToStream(outputStream, rpcRequest, serializer, compressor);
             return CommonDecoder.readStreamAndDecode(inputStream);
         } catch (IOException e){
-            log.error("{} : ", RpcExceptionBean.PROCESS_SERVICE_EXCEPTION, e);
-            return RpcResponse.fail(RpcExceptionBean.PROCESS_SERVICE_EXCEPTION, rpcRequest.getRequestId());
+            log.error("{}", RpcExceptionBean.GET_MESSAGE_EXCEPTION.getErrorMessage(), e);
+            return RpcResponse.fail(RpcExceptionBean.GET_MESSAGE_EXCEPTION, rpcRequest.getRequestId());
         }
     }
 }

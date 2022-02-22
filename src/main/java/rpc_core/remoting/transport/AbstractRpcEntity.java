@@ -30,8 +30,8 @@ public class AbstractRpcEntity implements RpcEntity{
     public AbstractRpcEntity(){
         Class<?> bootClass = ReflectUtil.getBootClassByStackTrace();
         if(!bootClass.isAnnotationPresent(PropertySource.class)){
-            log.error(RpcExceptionBean.BOOT_SERVER_FAILED.getErrorMessage());
-            throw new RpcException(RpcExceptionBean.BOOT_SERVER_FAILED);
+            log.error("boot class {} must be annotated with @PropertySource to enable initialize it from property file", bootClass.getName());
+            throw new RuntimeException(String.format("boot class %s must be annotated with @PropertySource to enable initialize it from property file", bootClass.getName()));
         }else{
             String propertyPath = bootClass.getAnnotation(PropertySource.class).value();
             Object properties = PropertyFileUtil.readPropertyFromFile(propertyPath);
@@ -43,7 +43,7 @@ public class AbstractRpcEntity implements RpcEntity{
     public void initializeFromPropertySource(RpcEntity rpcServer, Class<?> bootClass){
         String propertyPath = bootClass.getAnnotation(PropertySource.class).value();
         if(propertyPath.equals("")){
-            throw new RuntimeException("无效的配置文件地址");
+            throw new RuntimeException("empty property path");
         }
         if(propertyPath.endsWith(".yaml") || propertyPath.endsWith(".yml") || propertyPath.endsWith(".properties")){
             List<Field> fields = new ArrayList<>();
@@ -91,12 +91,12 @@ public class AbstractRpcEntity implements RpcEntity{
                                 break;
                         }
                     } catch (IllegalAccessException e) {
-                        throw new RpcException(RpcExceptionBean.BOOT_SERVER_FAILED);
+                        throw new RuntimeException(String.format("failed to set some fields of boot class %s", bootClass.getName()));
                     }
                 }
             }
         }else{
-            throw new RuntimeException("不支持的配置文件格式");
+            throw new RuntimeException(String.format("unsupported property file type: %s", propertyPath));
         }
     }
 

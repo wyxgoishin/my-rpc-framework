@@ -15,11 +15,11 @@ import rpc_core.remoting.transport.client.socket.SocketClient;
 import rpc_example.service.ExampleServiceOne;
 import rpc_example.service.ExampleServiceTwo;
 
-// 以注解方式配置 Client 属性
+// use annotation to initialize client from property file
 @PropertySource("client.yaml")
 public class TestClient {
     public static void main(String[] args) {
-        /* 手动初始化 Client 的属性
+        /* initialize client explicitly
         String serviceAddress = "127.0.0.1:8848";
         LoadBalancer loadBalancer = new RoundRobinLoadBalancer();
         ServiceDiscovery serviceDiscovery = new NacosServiceDiscovery(serviceAddress, loadBalancer);
@@ -31,7 +31,7 @@ public class TestClient {
         RpcClient client = new NettyClient();
         RpcClientProxy rpcClientProxy = new RpcClientProxy(client);
 
-        // 默认命名的服务
+        // service with default name
         ExampleServiceOne serviceOne = rpcClientProxy.getProxy(ExampleServiceOne.class);
         String replyOne = serviceOne.doService();
         System.out.println(replyOne);
@@ -40,7 +40,7 @@ public class TestClient {
         String replyTwo = serviceTwo.doService("client: service two");
         System.out.println(replyTwo);
 
-        // 自定义命名的服务
+        // service with custom name
         rpcClientProxy.setServiceName("service_two");
         String replyThree = serviceTwo.doService("client: service three");
         System.out.println(replyThree);

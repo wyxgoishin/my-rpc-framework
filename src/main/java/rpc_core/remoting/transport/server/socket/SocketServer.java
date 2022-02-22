@@ -38,7 +38,7 @@ public class SocketServer extends AbstractRpcServer {
 
     public SocketServer(String host, int port, ServiceRegistry serviceRegistry, SerializerEnum serializerEnum, CompressorEnum compressorEnum){
         if(serviceRegistry == null){
-            throw new RpcException(RpcExceptionBean.BOOT_SERVER_FAILED);
+            throw new RpcException(RpcExceptionBean.SERVICE_REGISTRY_NOT_EXISTS);
         }
         this.host = host;
         this.port = port;
@@ -54,15 +54,15 @@ public class SocketServer extends AbstractRpcServer {
     public void start(){
         ShutdownHook.getShutdownHook().addClearAllHook();
         try(ServerSocket serverSocket = new ServerSocket(port)){
-            log.info("服务器启动成功");
+            log.info("server starts succeeded");
             Socket socket;
             while((socket = serverSocket.accept()) != null){
-                log.info("客户端连接成功，其 IP 为：" + socket.getInetAddress());
+                log.info("connect client[{}] succeeded" + socket.getInetAddress().toString());
                 threadPool.execute(new SocketRequestHandlerThread(socket, requestHandler, serializer, compressor));
             }
             threadPool.shutdown();
         } catch (IOException e) {
-            log.error("{} : ", RpcExceptionBean.CONNECTION_EXCEPTION, e);
+            log.error("{}", RpcExceptionBean.CONNECTION_EXCEPTION.getErrorMessage(), e);
         }
     }
 }

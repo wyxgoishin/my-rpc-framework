@@ -13,14 +13,13 @@ import java.lang.reflect.Method;
 
 @Slf4j
 public class RequestHandler {
-//    private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
     private static final ServiceProvider serviceProvider = SingletonFactory.getInstance(DefaultServiceProvider.class);
 
     public Object handle(RpcRequest rpcRequest){
         Object service = serviceProvider.getServiceProvider(rpcRequest.getServiceName());
         Object result = invokeTargetMethod(rpcRequest, service);
         if(!(result instanceof RpcResponse)){
-            log.info("调用 {} 服务接口的 {} 方法成功", rpcRequest.getServiceName(), rpcRequest.getMethodName());
+            log.info("service call of {}:{} succeeded", rpcRequest.getServiceName(), rpcRequest.getMethodName());
         }
         return result;
     }
@@ -30,6 +29,7 @@ public class RequestHandler {
         try {
             method = service.getClass().getMethod(rpcRequest.getMethodName(), rpcRequest.getParameterTypes());
         } catch (NoSuchMethodException e){
+            log.error(RpcExceptionBean.METHOD_NOT_FOUND + rpcRequest.getServiceName() + ": " + rpcRequest.getMethodName());
             return RpcResponse.fail(RpcExceptionBean.METHOD_NOT_FOUND, rpcRequest.getRequestId());
         }
         try {

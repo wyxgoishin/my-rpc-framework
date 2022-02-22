@@ -12,7 +12,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 public class DefaultServiceProvider implements ServiceProvider {
-//    private static final Logger log = LoggerFactory.getLogger(DefaultServiceProvider.class);
 
     private static final Map<String, Object> serviceMap = new ConcurrentHashMap<>();
     private static final Set<String> registeredServices = ConcurrentHashMap.newKeySet();
@@ -22,14 +21,14 @@ public class DefaultServiceProvider implements ServiceProvider {
         if(registeredServices.contains(serviceName)) return;
         registeredServices.add(serviceName);
         serviceMap.put(serviceName, service);
-        log.info("注册服务：{}", serviceName);
+        log.info("try to register service: {}", serviceName);
     }
 
     @Override
     public synchronized Object getServiceProvider(String serviceName) {
         Object service = serviceMap.get(serviceName);
         if(service == null){
-            throw new RpcException(RpcExceptionBean.SERVICE_NOT_FOUND.getErrorMessage() + serviceName);
+            throw new RpcException(RpcExceptionBean.SERVICE_NOT_FOUND.getErrorMessage() + ": " + serviceName);
         }
         return service;
     }

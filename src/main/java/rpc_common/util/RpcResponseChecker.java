@@ -9,19 +9,17 @@ import rpc_common.exception.RpcException;
 
 public class RpcResponseChecker {
     private static final Logger logger = LoggerFactory.getLogger(RpcResponseChecker.class);
-    private static final String SERVICE_NAME = "服务名：";
 
     public static void check(RpcRequest rpcRequest, RpcResponse rpcResponse){
         if(rpcResponse == null){
-            throw new RpcException(RpcExceptionBean.PROCESS_SERVICE_EXCEPTION.getErrorMessage() + SERVICE_NAME
-                    + rpcRequest.getServiceName() + "(" + rpcRequest.getMethodName() + ")");
+            throw new RpcException("empty response received for service(" + rpcRequest.getServiceName() + "["
+                    + rpcRequest.getMethodName() + "])");
         }
         if(!rpcRequest.getRequestId().equals(rpcResponse.getResponseId())){
-            throw new RpcException(RpcExceptionBean.RESPONSE_NOT_MATCH.getErrorMessage() + SERVICE_NAME
-                    + rpcRequest.getServiceName() + "(" + rpcRequest.getMethodName() + ")");
+            throw new RpcException("response pack id not match request pack id");
         }
         if(rpcResponse.getRpcExceptionBean() != null){
-            throw new RpcException(rpcResponse.getRpcExceptionBean().getErrorMessage() + SERVICE_NAME
+            throw new RpcException(rpcResponse.getRpcExceptionBean().getErrorMessage() + "service name: "
                     + rpcRequest.getServiceName() + "(" + rpcRequest.getMethodName() + ")");
         }
     }

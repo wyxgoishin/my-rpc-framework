@@ -22,7 +22,7 @@ public class NacosServiceRegistry extends AbstractRegistry implements ServiceReg
             NamingService namingService = NacosUtil.getNamingService(serverAddress);
             NacosUtil.registerService(namingService, serviceName, inetSocketAddress);
         } catch (NacosException e) {
-            log.error("{} : ", RpcExceptionBean.REGISTER_SERVICE_TO_NACOS_FAILED, e);
+            log.error("register service to nacos failed", e);
         }
     }
 

@@ -18,14 +18,13 @@ import java.util.List;
 
 @Slf4j
 public class CommonDecoder extends ReplayingDecoder {
-//    private static final Logger log = LoggerFactory.getLogger(CommonDecoder.class);
     private static final int MAGIC_NUMBER = 0xDEADBABE;
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) {
         int magicNumber = in.readInt();
         if(magicNumber != MAGIC_NUMBER){
-            log.error("{} ：{}", RpcExceptionBean.UNKNOWN_PROTOCOL.getErrorMessage(), magicNumber);
+            log.error("{} : {}", RpcExceptionBean.UNKNOWN_PROTOCOL.getErrorMessage(), magicNumber);
             throw new RpcException(RpcExceptionBean.UNKNOWN_PROTOCOL);
         }
 
@@ -36,21 +35,21 @@ public class CommonDecoder extends ReplayingDecoder {
         }else if(packageCode == PackageType.RESPONSE_PACK.getCode()){
             packageClass = RpcResponse.class;
         }else{
-            log.error("{} ：{}", RpcExceptionBean.UNKNOWN_PACKAGE_CODE.getErrorMessage(), packageCode);
+            log.error("{} : {}", RpcExceptionBean.UNKNOWN_PACKAGE_CODE.getErrorMessage(), packageCode);
             throw new RpcException(RpcExceptionBean.UNKNOWN_PACKAGE_CODE);
         }
 
         int serializerCode = in.readInt();
         Serializer serializer = Serializer.getByCode(serializerCode);
         if(serializer == null){
-            log.error("{} ：{}", RpcExceptionBean.UNKNOWN_SERIALIZER.getErrorMessage(), serializerCode);
+            log.error("{} : {}", RpcExceptionBean.UNKNOWN_SERIALIZER.getErrorMessage(), serializerCode);
             throw new RpcException(RpcExceptionBean.UNKNOWN_SERIALIZER);
         }
 
         int compressorCode = in.readInt();
         Compressor compressor = Compressor.getByCode(compressorCode);
         if(compressor == null){
-            log.error("{} ：{}", RpcExceptionBean.UNKNOWN_COMPRESSOR.getErrorMessage(), serializerCode);
+            log.error("{} : {}", RpcExceptionBean.UNKNOWN_COMPRESSOR.getErrorMessage(), serializerCode);
             throw new RpcException(RpcExceptionBean.UNKNOWN_COMPRESSOR);
         }
 
@@ -67,7 +66,7 @@ public class CommonDecoder extends ReplayingDecoder {
         in.read(numberBytes);
         int magicNumber = bytesToInt(numberBytes);
         if(magicNumber != MAGIC_NUMBER){
-            log.error("{} ：{}", RpcExceptionBean.UNKNOWN_PROTOCOL.getErrorMessage(), magicNumber);
+            log.error("{} : {}", RpcExceptionBean.UNKNOWN_PROTOCOL.getErrorMessage(), magicNumber);
             throw new RpcException(RpcExceptionBean.UNKNOWN_PROTOCOL);
         }
 
@@ -79,7 +78,7 @@ public class CommonDecoder extends ReplayingDecoder {
         }else if(packageCode == PackageType.RESPONSE_PACK.getCode()){
             packageClass = RpcResponse.class;
         }else{
-            log.error("{} ：{}", RpcExceptionBean.UNKNOWN_PACKAGE_CODE.getErrorMessage(), packageCode);
+            log.error("{} : {}", RpcExceptionBean.UNKNOWN_PACKAGE_CODE.getErrorMessage(), packageCode);
             throw new RpcException(RpcExceptionBean.UNKNOWN_PACKAGE_CODE);
         }
 
@@ -87,7 +86,7 @@ public class CommonDecoder extends ReplayingDecoder {
         int serializerCode = bytesToInt(numberBytes);
         Serializer serializer = Serializer.getByCode(serializerCode);
         if(serializer == null){
-            log.error("{} ：{}", RpcExceptionBean.UNKNOWN_SERIALIZER.getErrorMessage(), serializerCode);
+            log.error("{} : {}", RpcExceptionBean.UNKNOWN_SERIALIZER.getErrorMessage(), serializerCode);
             throw new RpcException(RpcExceptionBean.UNKNOWN_SERIALIZER);
         }
 

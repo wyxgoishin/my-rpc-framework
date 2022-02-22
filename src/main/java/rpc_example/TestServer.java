@@ -13,13 +13,13 @@ import rpc_core.remoting.transport.server.socket.SocketServer;
 import rpc_example.service.ExampleServiceTwo;
 import rpc_example.service.impl.ExampleServiceTwoImpl;
 
-// 扫包注册所有带有@Service注解的服务
+// scan and register service with @Service annotated under given package
 @ServiceScan("rpc_example.service.impl")
-// 以注解方式配置 Server 属性
+// use annotation to initialize server from property file
 @PropertySource("server.properties")
 public class TestServer {
     public static void main(String[] args) {
-        /* 手动初始化 Server 的属性
+        /* initialize server explicitly
         String host = "localhost";
         int port = 9000;
         String serverAddress = "127.0.0.1:8848";
@@ -32,7 +32,7 @@ public class TestServer {
 
         RpcServer server = new SocketServer();
 
-        // 手动方式注册服务
+        // register service explicitly
         ExampleServiceTwo service = new ExampleServiceTwoImpl();
         for(Class<?> clazz : service.getClass().getInterfaces()){
             server.publishService(service, clazz.getCanonicalName());

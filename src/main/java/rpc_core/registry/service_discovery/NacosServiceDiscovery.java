@@ -39,16 +39,13 @@ public class NacosServiceDiscovery extends AbstractRegistry implements ServiceDi
         try {
             List<Instance> instances = NacosUtil.getNamingService(serverAddress).getAllInstances(serviceName);
             if(instances.size() == 0){
-                log.error(RpcExceptionBean.SERVICE_NOT_FOUND.getErrorMessage() + serviceName);
-                throw new RpcException(RpcExceptionBean.SERVICE_NOT_FOUND.getErrorMessage() + serviceName);
+                log.error(RpcExceptionBean.SERVICE_NOT_FOUND.getErrorMessage() + ":" + serviceName);
+                throw new RpcException(RpcExceptionBean.SERVICE_NOT_FOUND.getErrorMessage() + ":" + serviceName);
             }
-            /*
-            负载均衡
-             */
             Instance instance = loadBalancer.select(instances);
             return new InetSocketAddress(instance.getIp(), instance.getPort());
         } catch (NacosException e) {
-            log.error("{} : ", RpcExceptionBean.LOOKUP_SERVICE_IN_NACOS_FAILED, e);
+            log.error("look up service from nacos failed", e);
         }
         return null;
     }

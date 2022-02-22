@@ -2,7 +2,6 @@ package rpc_common.util;
 
 import org.yaml.snakeyaml.Yaml;
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,7 +27,7 @@ public final class PropertyFileUtil {
         }else if(propertyPath.endsWith(".properties")){
             return loadPropertyFromProperties(propertyPath, key);
         }else{
-            throw new RuntimeException("不支持的配置文件类型");
+            throw new RuntimeException(String.format("unsupported property file type: %s", propertyPath));
         }
     }
 
@@ -58,7 +57,7 @@ public final class PropertyFileUtil {
         }else if(propertyPath.endsWith("properties")){
             return readPropertyFromProperties(propertyPath);
         }else{
-            throw new RuntimeException("不支持的配置文件类型");
+            throw new RuntimeException(String.format("unsupported property file type: %s", propertyPath));
         }
     }
 
@@ -75,9 +74,9 @@ public final class PropertyFileUtil {
             properties.load(in);
             return properties;
         } catch (FileNotFoundException e) {
-            throw new RuntimeException("配置文件不存在");
+            throw new RuntimeException(String.format("property file not exists: %s", propertyPath));
         } catch (IOException e) {
-            throw new RuntimeException("读取配置文件错误");
+            throw new RuntimeException(String.format("load property file failed: %s", propertyPath));
         }
     }
 }

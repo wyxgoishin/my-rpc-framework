@@ -37,7 +37,7 @@ public class ZkServiceDiscovery extends AbstractRegistry implements ServiceDisco
         CuratorFramework zkClient = ZkUtil.getZkClient(serverAddress);
         List<String> serviceUrls = ZkUtil.getChildNodes(zkClient, serviceName);
         if(serviceUrls == null || serviceUrls.size() == 0){
-            throw new RpcException(RpcExceptionBean.SERVICE_NOT_FOUND);
+            throw new RpcException(RpcExceptionBean.SERVICE_NOT_FOUND + ": " + serviceName);
         }
         String serviceUrl = loadBalancer.select(serviceUrls);
         String[] socketAddress = serviceUrl.split(":");

@@ -10,7 +10,6 @@ import java.util.concurrent.*;
 
 @Slf4j
 public class ThreadPoolFactory {
-//    private final static Logger log = LoggerFactory.getLogger(ThreadPoolFactory.class);
     private static final int CORE_POOL_SIZE = 10;
     private static final int MAXIMUM_POOL_SIZE_SIZE = 100;
     private static final int KEEP_ALIVE_TIME = 1;
@@ -50,15 +49,15 @@ public class ThreadPoolFactory {
     }
 
     public static void shutDownAll() {
-        log.info("关闭所有线程池...");
+        log.info("starting to shutdown all thread-pool...");
         threadPollsMap.entrySet().parallelStream().forEach(entry -> {
             ExecutorService executorService = entry.getValue();
             executorService.shutdown();
-            log.info("关闭线程池 [{}] [{}]", entry.getKey(), executorService.isTerminated());
+            log.info("shutdown thread-pool [{}] [{}]", entry.getKey(), executorService.isTerminated());
             try {
                 executorService.awaitTermination(10, TimeUnit.SECONDS);
-            } catch (InterruptedException ie) {
-                log.error("关闭线程池失败！");
+            } catch (InterruptedException e) {
+                log.error("shut down thread-pool failed! ", e);
                 executorService.shutdownNow();
             }
         });

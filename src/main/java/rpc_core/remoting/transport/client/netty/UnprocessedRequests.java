@@ -5,9 +5,7 @@ import rpc_core.remoting.dto.RpcResponse;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * @author ziyang
- */
+
 public class UnprocessedRequests {
 
     private static final ConcurrentHashMap<String, CompletableFuture<RpcResponse>> unprocessedResponseFutures = new ConcurrentHashMap<>();

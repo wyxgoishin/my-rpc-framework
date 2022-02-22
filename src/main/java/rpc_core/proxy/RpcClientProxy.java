@@ -20,7 +20,6 @@ import java.util.concurrent.ExecutionException;
 @Data
 @Slf4j
 public class RpcClientProxy implements InvocationHandler {
-//    private static final Logger log = LoggerFactory.getLogger(RpcClientProxy.class);
     private RpcClient rpcClient;
     private String serviceName;
 
@@ -57,7 +56,7 @@ public class RpcClientProxy implements InvocationHandler {
                 CompletableFuture<RpcResponse> completableFuture = (CompletableFuture<RpcResponse>) rpcClient.sendRequest(rpcRequest);
                 rpcResponse = completableFuture.get();
             } catch (ExecutionException | InterruptedException e) {
-                log.error(RpcExceptionBean.SERVICE_RUNTIME_EXCEPTION.getErrorMessage());
+                log.error(RpcExceptionBean.SERVICE_RUNTIME_EXCEPTION.getErrorMessage() + " " + serviceName);
                 rpcResponse = RpcResponse.fail(RpcExceptionBean.SERVICE_RUNTIME_EXCEPTION, rpcRequest.getRequestId());
             }
         }

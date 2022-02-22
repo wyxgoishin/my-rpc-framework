@@ -5,21 +5,18 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import rpc_core.registry.service_discovery.ServiceDiscovery;
-import rpc_core.remoting.dto.RpcRequest;
-import rpc_core.remoting.dto.RpcResponse;
 import rpc_common.enumeration.CompressorEnum;
 import rpc_common.enumeration.RpcExceptionBean;
 import rpc_common.enumeration.SerializerEnum;
 import rpc_common.exception.RpcException;
 import rpc_common.factory.SingletonFactory;
-import rpc_core.balancer.LoadBalancer;
 import rpc_core.codec.CommonDecoder;
 import rpc_core.codec.CommonEncoder;
 import rpc_core.codec.compressor.Compressor;
-import rpc_core.registry.service_discovery.NacosServiceDiscovery;
 import rpc_core.codec.serializer.Serializer;
-import rpc_core.remoting.transport.AbstractRpcEntity;
+import rpc_core.registry.service_discovery.ServiceDiscovery;
+import rpc_core.remoting.dto.RpcRequest;
+import rpc_core.remoting.dto.RpcResponse;
 import rpc_core.remoting.transport.client.AbstractRpcClient;
 
 import java.net.InetSocketAddress;
@@ -65,7 +62,7 @@ public class NettyClient extends AbstractRpcClient {
 
     public NettyClient(ServiceDiscovery serviceDiscovery, SerializerEnum serializerEnum, CompressorEnum compressorEnum){
         if(serviceDiscovery == null){
-            throw new RpcException(RpcExceptionBean.BOOT_CLIENT_FAILED);
+            throw new RpcException(RpcExceptionBean.SERVICE_DISCOVERY_NOT_EXISTS);
         }
         serializer = Serializer.getByEnum(serializerEnum);
         compressor = Compressor.getByEnum(compressorEnum);
@@ -84,8 +81,8 @@ public class NettyClient extends AbstractRpcClient {
     @Override
     public CompletableFuture<RpcResponse> sendRequest(RpcRequest rpcRequest) {
         if(serializer == null){
-            log.error(RpcExceptionBean.SERIALIZER_NOT_EXISTS.getErrorMessage());
-            throw new RpcException(RpcExceptionBean.SERIALIZER_NOT_EXISTS);
+            log.error("serializer not set yet");
+            throw new RuntimeException("serializer not set yet");
         }
         CompletableFuture<RpcResponse> resultFuture = new CompletableFuture<>();
         InetSocketAddress inetSocketAddress = serviceDiscovery.lookupService(rpcRequest.getServiceName());
@@ -94,26 +91,17 @@ public class NettyClient extends AbstractRpcClient {
             group.shutdownGracefully();
             return null;
         }
-        log.info("客户端连接到服务器 {}:{}", inetSocketAddress.getHostName(), inetSocketAddress.getPort());
+        log.info("trying to connect server[{}:{}]", inetSocketAddress.getHostName(), inetSocketAddress.getPort());
         unprocessedRequests.put(rpcRequest.getRequestId(), resultFuture);
         channel.writeAndFlush(rpcRequest).addListener((ChannelFutureListener) future1 -> {
             if(future1.isSuccess()){
-                log.info(String.format("客户端发送消息：%s", rpcRequest));
+                log.info(String.format("client sent message[%s] succeeded", rpcRequest));
             }else{
                 future1.channel().close();
                 resultFuture.completeExceptionally(future1.cause());
-                log.error("{}：", RpcExceptionBean.SEND_MESSAGE_EXCEPTION, future1.cause());
+                log.error("{}", RpcExceptionBean.SEND_MESSAGE_EXCEPTION, future1.cause());
             }
         });
-        /* 先前的阻塞版
-        由于这里的发送是非阻塞的，故发送后会立刻返回，而无法获得结果；
-        因此通过 AttributeKey 阻塞获得结果并将其放入 ChannelHandlerContext中
-
-        AttributeKey<RpcResponse> key = AttributeKey.valueOf("rpcResponse");
-        RpcResponse rpcResponse = channel.attr(key).get();
-        return rpcResponse;
-
-         */
         return resultFuture;
     }
 
@@ -133,7 +121,7 @@ public class NettyClient extends AbstractRpcClient {
             CompletableFuture<Channel> completableFuture = new CompletableFuture<>();
             bootstrap.connect(inetSocketAddress).addListener((ChannelFutureListener) future -> {
                 if(future.isSuccess()){
-                    log.info("客户端连接成功");
+                    log.info("connect server succeeded");
                     completableFuture.complete(future.channel());
                 }else{
                     log.error(RpcExceptionBean.CONNECTION_EXCEPTION.getErrorMessage());
@@ -142,7 +130,7 @@ public class NettyClient extends AbstractRpcClient {
             channel = completableFuture.get();
             channelMap.put(key, channel);
         } catch (ExecutionException | InterruptedException e) {
-            log.error("{}: ", RpcExceptionBean.CONNECTION_EXCEPTION.getErrorMessage(), e);
+            log.error("{}", RpcExceptionBean.CONNECTION_EXCEPTION.getErrorMessage(), e);
             return null;
         }
         return channel;

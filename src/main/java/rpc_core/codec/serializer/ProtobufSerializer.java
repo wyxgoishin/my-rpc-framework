@@ -8,8 +8,8 @@ import rpc_common.enumeration.SerializerEnum;
 
 public class ProtobufSerializer implements Serializer{
 
-    /**
-     * Avoid re applying buffer space every time serialization
+    /*
+    Avoid re applying buffer space every time serialization
      */
     private static final LinkedBuffer BUFFER = LinkedBuffer.allocate(LinkedBuffer.DEFAULT_BUFFER_SIZE);
 

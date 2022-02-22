@@ -46,7 +46,7 @@ public class ZkUtil {
         zkClient.start();
         try{
             if(!zkClient.blockUntilConnected(30, TimeUnit.SECONDS)){
-                throw new RuntimeException("Zookeeper 启动超时");
+                throw new RuntimeException("zookeeper connection timeout");
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -59,14 +59,14 @@ public class ZkUtil {
         String servicePath = DEFAULT_REGISTER_ROOT_PATH + "/" + serviceName + "/" + inetSocketAddress.getHostString() + ":" + inetSocketAddress.getPort();
         try {
             if(REGISTERED_PATH_SET.contains(servicePath) || zkClient.checkExists().forPath(servicePath) != null){
-                log.info("该服务已创建");
+                log.info(String.format("service %s is already created", serviceName));
             }else{
                 zkClient.create().creatingParentsIfNeeded().withMode(CreateMode.PERSISTENT).forPath(servicePath);
-                log.info("成功为服务{}创建节点", serviceName);
+                log.info(String.format("create zNode for service %s succeeded", serviceName));
             }
             REGISTERED_PATH_SET.add(servicePath);
         } catch (Exception e) {
-            log.error("为服务{}创建节点失败", serviceName, e);
+            log.info(String.format("create zNode for service %s failed", serviceName));
         }
     }
 
@@ -92,13 +92,13 @@ public class ZkUtil {
         try {
             Stat stat = zkClient.checkExists().forPath(servicePath);
             if(stat == null){
-                throw new RpcException(RpcExceptionBean.SERVICE_NOT_FOUND);
+                throw new RpcException(RpcExceptionBean.SERVICE_NOT_FOUND + ": " + serviceName);
             }
             result = zkClient.getChildren().forPath(servicePath);
             SERVICE_ADDRESS_MAP.put(serviceName, result);
             registerWatcher(serviceName, servicePath, zkClient);
         } catch (Exception e) {
-            log.error("获取 {} 的子节点失败", servicePath, e);
+            log.error(String.format("get zNode for service %s failed", serviceName), e);
         }
         return result;
     }

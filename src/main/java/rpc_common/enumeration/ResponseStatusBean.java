@@ -6,8 +6,8 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 public enum ResponseStatusBean {
-    SUCCESS(200, "服务调用成功"),
-    FAIL(400, "服务调用失败"),
+    SUCCESS(200, "service call succeeded"),
+    FAIL(400, "service call failed"),
     ;
 
     private final Integer statusCode;

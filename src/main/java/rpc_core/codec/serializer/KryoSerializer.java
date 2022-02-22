@@ -16,7 +16,6 @@ import java.io.IOException;
 
 @Slf4j
 public class KryoSerializer implements Serializer {
-//    private static final Logger log = LoggerFactory.getLogger(KryoSerializer.class);
 
     private static final ThreadLocal<Kryo> kryoThreadLocal = ThreadLocal.withInitial(() -> {
         Kryo kryo = new Kryo();
@@ -37,8 +36,8 @@ public class KryoSerializer implements Serializer {
                 return output.toBytes();
             }
         } catch (IOException e) {
-            log.error("{} ：", RpcExceptionBean.SERIALIZAION_ERROR.getErrorMessage(), e);
-            throw new RpcException(RpcExceptionBean.SERIALIZAION_ERROR);
+            log.error("error occurred during serializing using kryo serializer");
+            throw new RuntimeException("error occurred during serializing using kryo serializer");
         }
     }
 
@@ -52,8 +51,8 @@ public class KryoSerializer implements Serializer {
                 return o;
             }
         } catch (IOException e) {
-            log.error("{} ：", RpcExceptionBean.SERIALIZAION_ERROR.getErrorMessage(), e);
-            throw new RpcException(RpcExceptionBean.SERIALIZAION_ERROR);
+            log.error("error occurred during serializing using kryo serializer");
+            throw new RuntimeException("error occurred during serializing using kryo serializer");
         }
     }
 

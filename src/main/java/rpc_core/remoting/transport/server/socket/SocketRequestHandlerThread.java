@@ -17,7 +17,6 @@ import java.net.Socket;
 @AllArgsConstructor
 @Slf4j
 public class SocketRequestHandlerThread implements Runnable {
-//    private static final Logger log = LoggerFactory.getLogger(SocketRequestHandlerThread.class);
     private Socket socket;
     private RequestHandler requestHandler;
     private Serializer serializer;

@@ -21,14 +21,14 @@ public class HessianSerializer implements Serializer{
             hessianOutput.writeObject(obj);
             return byteArrayOutputStream.toByteArray();
         } catch (IOException e) {
-            log.error(RpcExceptionBean.SERIALIZAION_ERROR.getErrorMessage(), e);
-            throw new RpcException(RpcExceptionBean.SERIALIZAION_ERROR);
+            log.error("error occurred during serializing using hessian serializer");
+            throw new RuntimeException("error occurred during serializing using hessian serializer");
         } finally {
             if (hessianOutput != null) {
                 try {
                     hessianOutput.close();
                 } catch (IOException e) {
-                    log.error("关闭流时有错误发生:", e);
+                    log.error("error occurred when trying to close the hessian stream", e);
                 }
             }
         }
@@ -41,8 +41,8 @@ public class HessianSerializer implements Serializer{
             hessianInput = new HessianInput(byteArrayInputStream);
             return hessianInput.readObject();
         } catch (IOException e) {
-            log.error(RpcExceptionBean.SERIALIZAION_ERROR.getErrorMessage(), e);
-            throw new RpcException(RpcExceptionBean.SERIALIZAION_ERROR);
+            log.error("error occurred during deserializing using hessian serializer");
+            throw new RuntimeException("error occurred during deserializing using hessian serializer");
         } finally {
             if (hessianInput != null) {
                 hessianInput.close();
