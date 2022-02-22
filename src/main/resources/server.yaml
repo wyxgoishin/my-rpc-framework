@@ -2,4 +2,6 @@ host: localhost
 port: 9000
 serializer: kryo
 compressor: gzip
-serviceRegistry: nacos
+registry:
+type: nacos
+serverAaddress: 127.0.0.1:8848

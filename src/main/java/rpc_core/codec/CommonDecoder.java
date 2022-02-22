@@ -4,13 +4,13 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ReplayingDecoder;
 import lombok.extern.slf4j.Slf4j;
-import rpc_common.entity.RpcRequest;
-import rpc_common.entity.RpcResponse;
+import rpc_core.remoting.dto.RpcRequest;
+import rpc_core.remoting.dto.RpcResponse;
 import rpc_common.enumeration.PackageType;
 import rpc_common.enumeration.RpcExceptionBean;
 import rpc_common.exception.RpcException;
-import rpc_core.compresser.Compressor;
-import rpc_core.serializer.Serializer;
+import rpc_core.codec.compressor.Compressor;
+import rpc_core.codec.serializer.Serializer;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,9 +47,17 @@ public class CommonDecoder extends ReplayingDecoder {
             throw new RpcException(RpcExceptionBean.UNKNOWN_SERIALIZER);
         }
 
+        int compressorCode = in.readInt();
+        Compressor compressor = Compressor.getByCode(compressorCode);
+        if(compressor == null){
+            log.error("{} ：{}", RpcExceptionBean.UNKNOWN_COMPRESSOR.getErrorMessage(), serializerCode);
+            throw new RpcException(RpcExceptionBean.UNKNOWN_COMPRESSOR);
+        }
+
         int length = in.readInt();
-        byte[] content = new byte[length];
-        in.readBytes(content);
+        byte[] compressedContent = new byte[length];
+        in.readBytes(compressedContent);
+        byte[] content = compressor.decompress(compressedContent);
         Object obj = serializer.deserialize(content, packageClass);
         out.add(obj);
     }

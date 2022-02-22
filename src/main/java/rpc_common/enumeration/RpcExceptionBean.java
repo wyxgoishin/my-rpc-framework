@@ -13,6 +13,7 @@ public enum RpcExceptionBean {
     BOOT_SERVER_FAILED("启动服务器失败;"),
     SEND_MESSAGE_EXCEPTION("发送消息时发生错误;"),
     PROCESS_SERVICE_EXCEPTION("处理服务时发生错误;"),
+    BOOT_CLIENT_FAILED("启动客户端失败"),
     // 服务相关
     SERVICE_NOT_FOUND("未找到所请求的服务接口: "),
     METHOD_NOT_FOUND("未在所请求的服务接口中找到请求的方法;"),
@@ -32,8 +33,8 @@ public enum RpcExceptionBean {
     // 加载服务相关
     LOAD_BOOT_CLASS_FAILED("启动类加载错误;"),
     // 其他
-    UNKNOWN_SERVICE_REGISTRTY("未知的服务注册中心"),
-    UNKNOWN_COMPRESSOR("未知的压缩类型");
+    UNKNOWN_SERVICE_REGISTRY_AND_DISCOVERY("未知的服务注册与发现中心"),
+    UNKNOWN_COMPRESSOR("未知的压缩类型"),;
 
     private final String errorMessage;
 }

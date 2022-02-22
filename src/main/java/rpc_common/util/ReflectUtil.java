@@ -3,6 +3,8 @@ package rpc_common.util;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rpc_common.enumeration.RpcExceptionBean;
+import rpc_common.exception.RpcException;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -17,7 +19,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 @Slf4j
-public class ReflectUtil {
+public final class ReflectUtil {
 //    private static final Logger log = LoggerFactory.getLogger(ReflectUtil.class);
 
     private static final String FILE = "file";
@@ -27,9 +29,17 @@ public class ReflectUtil {
     /*
     通过方法调用栈来获取启动类，因为启动类一定位于调用栈的最底端
      */
-    public static String getBootClassByStackTrace() {
+    public static Class<?> getBootClassByStackTrace() {
         StackTraceElement[] stack = new Throwable().getStackTrace();
-        return stack[stack.length - 1].getClassName();
+        String mainClassName = stack[stack.length - 1].getClassName();
+        Class<?> startClass;
+        try {
+            startClass = Class.forName(mainClassName);
+        } catch (ClassNotFoundException e) {
+            log.error("{}:", RpcExceptionBean.LOAD_BOOT_CLASS_FAILED.getErrorMessage(), e);
+            throw new RpcException(RpcExceptionBean.LOAD_BOOT_CLASS_FAILED);
+        }
+        return startClass;
     }
 
     public static Set<Class<?>> getClasses(String packageName){

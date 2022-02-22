@@ -9,7 +9,7 @@ public class RandomLoadBalancer implements LoadBalancer{
     private static final Random random = new Random(RandomLoadBalancer.class.hashCode());
 
     @Override
-    public Instance select(List<Instance> instances) {
-        return instances.get(random.nextInt(instances.size()));
+    public <T> T select(List<T> inputs) {
+        return inputs.get(random.nextInt(inputs.size()));
     }
 }

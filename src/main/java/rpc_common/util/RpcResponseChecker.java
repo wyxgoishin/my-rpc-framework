@@ -2,8 +2,8 @@ package rpc_common.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rpc_common.entity.RpcRequest;
-import rpc_common.entity.RpcResponse;
+import rpc_core.remoting.dto.RpcRequest;
+import rpc_core.remoting.dto.RpcResponse;
 import rpc_common.enumeration.RpcExceptionBean;
 import rpc_common.exception.RpcException;
 
