@@ -27,7 +27,6 @@ public class TestServer {
         SerializerEnum serializer = SerializerEnum.KRYO;
         CompressorEnum compressor = CompressorEnum.GZIP;
         RpcServer server = new SocketServer(host, port, serviceRegistry, serializer, compressor);
-        RpcServer server = new SocketServer();
          */
 
         RpcServer server = new SocketServer();

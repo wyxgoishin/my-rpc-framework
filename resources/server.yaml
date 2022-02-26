@@ -4,5 +4,5 @@ port: 9000
 serializer: kryo
 compressor: gzip
 registry:
-type: nacos
-serverAaddress: 127.0.0.1:8848
+  type: nacos
+  serverAaddress: 127.0.0.1:8848

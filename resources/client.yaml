@@ -3,4 +3,4 @@ serializer: protobuf
 compressor: gzip
 registry:
   type: zookeeper
-  serverAddress: 172.25.173.247:2181
+  serverAddress: 127.0.0.1:2181
