@@ -112,11 +112,17 @@ bin/zkServer.cmd start conf/zoo.cfg
 若希望以单台电脑上以集群模式运行 Zookeeper，可创建多个 `zoo_x.cfg`，并在对应的 `dataDir` 下分别创建 `myid` 文件，文件内容为其集群编号。下面是 `zoo_x.cfg` 的示例文件：
 
 ```bash
-tickTime=2000                                                                         initLimit=10                                                                           syncLimit=5                                                                           dataDir=/xxx/data
+tickTime=2000
+initLimit=10
+syncLimit=5
+dataDir=/xxx/data
 # 不同 Zookeeper 实例的端口应不同，因为它们运行在同一台电脑上
-clientPort=2182                                                                       dataLogDir=/xxx/log
+clientPort=2182
+dataLogDir=/xxx/log
 # x 为其集群编号，如 1
-server.1=localhost:2287:3387                                                           server.2=localhost:2288:3388                                                           server.3=localhost:2289:3389
+server.1=localhost:2287:3387
+server.2=localhost:2288:3388
+server.3=localhost:2289:3389
 ```
 
 而后依次启动对应的 Zookeeper 实例：

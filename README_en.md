@@ -112,11 +112,17 @@ bin/zkServer.cmd start conf/zoo.cfg
 If you wish to run Zookeeper in cluster mode in one computer, you can create multiple `zoo_x.cfg` like `zoo_1.cfg` and create myid file with content as its cluster id like 1. Below is an example of `zoo_x.cfg` :
 
 ```bash
-tickTime=2000                                                                         initLimit=10                                                                           syncLimit=5                                                                           dataDir=/xxx/data
+tickTime=2000
+initLimit=10
+syncLimit=5
+dataDir=/xxx/data
 # Different Zookeeper instance should have different clientPort as they are run in same computer
-clientPort=2182                                                                       dataLogDir=/xxx/log
+clientPort=2182
+dataLogDir=/xxx/log
 # x is the cluster number for corresponding Zookeeper instance
-server.1=localhost:2287:3387                                                           server.2=localhost:2288:3388                                                           server.3=localhost:2289:3389
+server.1=localhost:2287:3387
+server.2=localhost:2288:3388
+server.3=localhost:2289:3389
 ```
 
 Then start all the Zookeeper instance as below.
