@@ -30,7 +30,6 @@
 - rpc_common：存放一些枚举类、工具类...
 - rpc_core：RPC 框架的核心实现类
 - rpc_example：存放了服务端、客户端的代码示例
-- resources：存放了配置文件示例
 
 ## 传输协议
 
@@ -211,7 +210,7 @@ registry.serverAddress=127.0.0.1:2181
 
 ```java
 // 自动扫描注册对应包下所有带有 @Service 注解的服务类
-@ServiceScan("rpc_example.service.impl")
+@ServiceScan("service.impl")
 public class xxxServer{
     ...;
     
